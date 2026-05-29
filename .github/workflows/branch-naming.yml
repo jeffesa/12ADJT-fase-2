@@ -1,0 +1,40 @@
+name: Branch Naming Convention
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  validate-branch-name:
+    name: Validate Branch Name
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check branch name
+        run: |
+          BRANCH_NAME="${{ github.head_ref }}"
+          PATTERN="^(feature|bugfix|hotfix|release|chore|docs|test|refactor|perf|ci|style)/.+"
+
+          echo "Branch: $BRANCH_NAME"
+
+          if [[ "$BRANCH_NAME" =~ $PATTERN ]]; then
+            echo "✅ Branch name follows convention: $BRANCH_NAME"
+          else
+            echo "❌ Branch name does NOT follow convention: $BRANCH_NAME"
+            echo ""
+            echo "Allowed prefixes:"
+            echo "  feature/*  - New features"
+            echo "  bugfix/*   - Bug fixes"
+            echo "  hotfix/*   - Urgent fixes"
+            echo "  release/*  - Release preparation"
+            echo "  chore/*    - Maintenance tasks"
+            echo "  docs/*     - Documentation"
+            echo "  test/*     - Tests"
+            echo "  refactor/* - Code refactoring"
+            echo "  perf/*     - Performance improvements"
+            echo "  ci/*       - CI/CD changes"
+            echo "  style/*    - Code style/formatting"
+            echo ""
+            echo "Example: feature/task-001-setup-spring-boot"
+            exit 1
+          fi
