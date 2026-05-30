@@ -42,6 +42,64 @@ src/main/java/com/fiap/fase2/
 
 ---
 
+## 🌿 Convenção de Branches
+
+O repositório possui validação automática de nomes de branch. PRs com branches fora do padrão serão **bloqueados**.
+
+### Prefixos permitidos:
+
+| Prefixo | Uso |
+|---------|-----|
+| `feature/*` | Novas funcionalidades |
+| `bugfix/*` | Correção de bugs |
+| `hotfix/*` | Correções urgentes em produção |
+| `release/*` | Preparação de release |
+| `chore/*` | Tarefas de manutenção |
+| `docs/*` | Documentação |
+| `test/*` | Testes |
+| `refactor/*` | Refatoração de código |
+| `perf/*` | Melhorias de performance |
+| `ci/*` | Alterações de CI/CD |
+| `style/*` | Formatação e estilo de código |
+
+### Exemplos válidos:
+```
+feature/task-001-setup-spring-boot
+bugfix/fix-user-validation
+docs/update-readme
+refactor/clean-architecture-user
+```
+
+### Exemplos inválidos (PR será bloqueado):
+```
+minha-branch
+task-001
+fix-bug
+update
+```
+
+### Como renomear uma branch:
+
+```bash
+# Renomear branch local
+git branch -m nome-errado feature/nome-correto
+
+# Se já fez push com nome errado, deletar remote e push com novo nome
+git push origin --delete nome-errado
+git push -u origin feature/nome-correto
+```
+
+### Como criar branch corretamente desde o início:
+
+```bash
+# A partir de develop
+git checkout develop
+git pull origin develop
+git checkout -b feature/task-001-setup-spring-boot
+```
+
+---
+
 ## 🚀 Como Executar
 
 ### Pré-requisitos
