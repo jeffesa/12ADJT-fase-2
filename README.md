@@ -104,6 +104,39 @@ git checkout -b feature/task-001-setup-spring-boot
 
 ## 🚀 Como Executar
 
+### Script Runner (recomendado)
+
+```bash
+./run.sh
+```
+
+Menu interativo:
+```
+╔══════════════════════════════════════════╗
+║   🚀 Tech Challenge Fase 2 - Runner     ║
+╠══════════════════════════════════════════╣
+║  1) Local - profile dev (H2)            ║
+║  2) Local - profile test (H2)           ║
+║  3) Local - profile prod (PostgreSQL)   ║
+║  4) Docker Compose (build + up)         ║
+║  5) Docker Compose (stop)               ║
+║  6) Rodar testes (mvn clean verify)     ║
+║  7) Kill porta 8080                     ║
+║  0) Sair                                ║
+╚══════════════════════════════════════════╝
+```
+
+Também aceita argumentos diretos:
+```bash
+./run.sh dev      # Inicia com profile dev (H2)
+./run.sh docker   # Docker Compose build + up
+./run.sh stop     # Para Docker Compose
+./run.sh tests    # Roda testes
+./run.sh kill     # Mata processo na porta 8080
+```
+
+> **Nota:** Requer macOS/Linux ou WSL no Windows. Detecta automaticamente Java 17 e Docker (Colima ou Docker Desktop).
+
 ### Pré-requisitos
 - Java 17+
 - Maven 3.8+
