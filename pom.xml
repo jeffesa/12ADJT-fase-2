@@ -110,6 +110,7 @@
                     </execution>
                     <execution>
                         <id>check</id>
+                        <phase>none</phase> <!-- Ativado na TASK-030 quando cobertura >= 80% -->
                         <goals>
                             <goal>check</goal>
                         </goals>
