@@ -1,5 +1,7 @@
 # 🚀 Sistema de Gestão de Restaurantes
 
+[![CI/CD Pipeline](https://github.com/jeffesa/12ADJT-fase-2/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/jeffesa/12ADJT-fase-2/actions/workflows/ci-cd.yml)
+
 Sistema de gestão de restaurantes desenvolvido com Spring Boot para o Tech Challenge - Fase 2 da FIAP.
 
 ---
