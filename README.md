@@ -180,4 +180,4 @@ mvn clean verify
 Projeto desenvolvido para fins educacionais - FIAP Tech Challenge Fase 2.
 
 
-<!-- Teste fluxo develop → main: se este texto está na main, o auto PR funcionou -->
+<!-- . -->
