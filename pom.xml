@@ -21,6 +21,9 @@
         <java.version>17</java.version>
         <springdoc.version>2.3.0</springdoc.version>
         <jacoco.version>0.8.11</jacoco.version>
+        <sonar.organization>jeffesa</sonar.organization>
+        <sonar.projectKey>jeffesa_12ADJT-fase-2</sonar.projectKey>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     </properties>
 
     <dependencies>
