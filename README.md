@@ -1,6 +1,8 @@
 # 🚀 Sistema de Gestão de Restaurantes
 
 [![CI/CD Pipeline](https://github.com/jeffesa/12ADJT-fase-2/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/jeffesa/12ADJT-fase-2/actions/workflows/ci-cd.yml)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=jeffesa_12ADJT-fase-2&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=jeffesa_12ADJT-fase-2)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=jeffesa_12ADJT-fase-2&metric=coverage)](https://sonarcloud.io/summary/new_code?id=jeffesa_12ADJT-fase-2)
 
 Sistema de gestão de restaurantes desenvolvido com Spring Boot para o Tech Challenge - Fase 2 da FIAP.
 
