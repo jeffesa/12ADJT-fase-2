@@ -1,0 +1,26 @@
+name: Auto PR to Main
+
+on:
+  push:
+    branches: [develop]
+
+jobs:
+  create-pr:
+    name: Create PR develop → main
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: develop
+          base: main
+          title: "release: sync develop → main"
+          body: |
+            Automated PR to sync develop into main.
+            All changes passed CI/CD and SonarCloud on develop.
+          labels: release
