@@ -1,0 +1,37 @@
+# Build
+target/
+build/
+
+# IDEs
+.idea/
+.vscode/
+.kiro/
+*.iml
+*.ipr
+*.iws
+
+# Git
+.git/
+.gitignore
+
+# Logs e temporários
+*.log
+*.tmp
+*.swp
+*.swo
+*.exec
+*.bak
+
+# Cache
+.cache/
+node_modules/
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+
+# Docs (não necessários na imagem)
+docs/
+
+# Backups
+*~
