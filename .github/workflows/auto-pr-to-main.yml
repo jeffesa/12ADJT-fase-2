@@ -13,14 +13,20 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v5
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          branch: develop
-          base: main
-          title: "release: sync develop → main"
-          body: |
-            Automated PR to sync develop into main.
-            All changes passed CI/CD and SonarCloud on develop.
-          labels: release
+      - name: Create or update PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Verifica se já existe PR aberto de develop para main
+          EXISTING_PR=$(gh pr list --base main --head develop --state open --json number --jq '.[0].number' 2>/dev/null)
+          
+          if [ -n "$EXISTING_PR" ]; then
+            echo "✅ PR #$EXISTING_PR já existe (develop → main). Nada a fazer."
+          else
+            gh pr create \
+              --base main \
+              --head develop \
+              --title "release: sync develop → main" \
+              --body "Automated PR to sync develop into main. All changes passed CI/CD and SonarCloud on develop." \
+              --label "release" 2>/dev/null || echo "⚠️ Não foi possível criar PR (pode não haver diferenças)."
+          fi
