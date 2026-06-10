@@ -15,6 +15,12 @@ jobs:
           BRANCH_NAME="${{ github.head_ref }}"
           PATTERN="^(feature|bugfix|hotfix|release|chore|docs|test|refactor|perf|ci|style)/.+"
 
+          # Branches protegidas não precisam seguir o padrão
+          if [[ "$BRANCH_NAME" == "main" || "$BRANCH_NAME" == "develop" ]]; then
+            echo "✅ Branch protegida: $BRANCH_NAME (skip validation)"
+            exit 0
+          fi
+
           echo "Branch: $BRANCH_NAME"
 
           if [[ "$BRANCH_NAME" =~ $PATTERN ]]; then
