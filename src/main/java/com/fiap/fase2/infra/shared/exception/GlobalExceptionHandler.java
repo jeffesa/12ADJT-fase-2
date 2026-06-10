@@ -1,7 +1,7 @@
-package com.fiap.fase2.infra.config;
+package com.fiap.fase2.infra.shared.exception;
 
-import com.fiap.fase2.domain.exception.BusinessException;
-import com.fiap.fase2.domain.exception.EntityNotFoundException;
+import com.fiap.fase2.domain.shared.EntityNotFoundException;
+import com.fiap.fase2.domain.shared.BusinessException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
