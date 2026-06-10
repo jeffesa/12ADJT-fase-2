@@ -35,14 +35,37 @@ API RESTful para gestão de restaurantes com funcionalidades de:
 
 ## 🏗️ Arquitetura
 
-Clean Architecture com separação em camadas:
+Clean Architecture organizada por feature/domínio:
 
 ```
 src/main/java/com/fiap/fase2/
-├── domain/          # Entidades puras e interfaces (gateway)
-├── application/     # Casos de uso (lógica de aplicação)
-└── infra/           # Controllers, JPA, configurações
+├── domain/                        # Regras de negócio (sem dependência de framework)
+│   ├── usertype/                  #   Entidade + Gateway (port)
+│   ├── user/
+│   ├── restaurant/
+│   ├── menuitem/
+│   └── shared/                    #   Exceções de domínio compartilhadas
+├── application/                   # Casos de uso (orquestração)
+│   ├── usertype/
+│   ├── user/
+│   ├── restaurant/
+│   └── menuitem/
+└── infra/                         # Frameworks e drivers (Spring, JPA, HTTP)
+    ├── web/                       #   Controllers REST + DTOs (entrada)
+    │   ├── usertype/
+    │   ├── user/
+    │   ├── restaurant/
+    │   └── menuitem/
+    ├── persistence/               #   JPA entities + repositories (saída)
+    │   ├── usertype/
+    │   ├── user/
+    │   ├── restaurant/
+    │   └── menuitem/
+    ├── config/                    #   OpenAPI, Security, Beans
+    └── shared/                    #   GlobalExceptionHandler
 ```
+
+**Fluxo de dependência:** `infra → application → domain` (de fora para dentro)
 
 ---
 

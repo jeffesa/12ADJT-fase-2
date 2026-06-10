@@ -1,4 +1,4 @@
-package com.fiap.fase2.domain.exception;
+package com.fiap.fase2.domain.shared;
 
 public class EntityNotFoundException extends RuntimeException {
 
