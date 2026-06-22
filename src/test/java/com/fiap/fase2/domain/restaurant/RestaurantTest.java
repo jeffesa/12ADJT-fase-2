@@ -3,7 +3,6 @@ package com.fiap.fase2.domain.restaurant;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -15,7 +14,7 @@ public class RestaurantTest {
     void shouldCreateRestaurantWithValidData() {
         UUID id = UUID.randomUUID();
         UUID ownerId = UUID.randomUUID();
-        LocalDateTime openingHours = LocalDateTime.now();
+        String openingHours = "Seg-Sex 11:00-23:00";
 
         Restaurant restaurant = new Restaurant(id, "Pizzaria Italia", "Rua A, 123", "ITALIANO", openingHours, ownerId);
         restaurant.setId(id);
@@ -43,7 +42,7 @@ public class RestaurantTest {
         Restaurant restaurant = new Restaurant();
         UUID id = UUID.randomUUID();
         UUID ownerId = UUID.randomUUID();
-        LocalDateTime openingHours = LocalDateTime.now();
+        String openingHours = "Seg-Sex 11:00-23:00";
 
         restaurant.setId(id);
         restaurant.setName("Sushi House");
@@ -65,7 +64,7 @@ public class RestaurantTest {
     void shouldThrowExceptionWhenNameIsNull() {
         UUID id = UUID.randomUUID();
         UUID ownerId = UUID.randomUUID();
-        LocalDateTime openingHours = LocalDateTime.now();
+        String openingHours = "Seg-Sex 11:00-23:00";
 
         assertThrows(IllegalArgumentException.class, () -> new Restaurant(id, null, "Rua A, 123", "ITALIANO", openingHours, ownerId));
     }
@@ -75,7 +74,7 @@ public class RestaurantTest {
     void shouldThrowExceptionWhenNameIsBlank() {
         UUID id = UUID.randomUUID();
         UUID ownerId = UUID.randomUUID();
-        LocalDateTime openingHours = LocalDateTime.now();
+        String openingHours = "Seg-Sex 11:00-23:00";
 
         assertThrows(IllegalArgumentException.class, () -> new Restaurant(id, "   ", "Rua A, 123", "ITALIANO", openingHours, ownerId));
     }
@@ -92,7 +91,7 @@ public class RestaurantTest {
     void shouldThrowExceptionWhenAddressIsNull() {
         UUID id = UUID.randomUUID();
         UUID ownerId = UUID.randomUUID();
-        LocalDateTime openingHours = LocalDateTime.now();
+        String openingHours = "Seg-Sex 11:00-23:00";
 
         assertThrows(IllegalArgumentException.class, () -> new Restaurant(id, "Pizzaria", null, "ITALIANO", openingHours, ownerId));
     }
@@ -102,7 +101,7 @@ public class RestaurantTest {
     void shouldThrowExceptionWhenAddressIsBlank() {
         UUID id = UUID.randomUUID();
         UUID ownerId = UUID.randomUUID();
-        LocalDateTime openingHours = LocalDateTime.now();
+        String openingHours = "Seg-Sex 11:00-23:00";
 
         assertThrows(IllegalArgumentException.class, () -> new Restaurant(id, "Pizzaria", "   ", "ITALIANO", openingHours, ownerId));
     }
@@ -126,7 +125,7 @@ public class RestaurantTest {
     void shouldThrowExceptionWhenCuisineTypeIsNull() {
         UUID id = UUID.randomUUID();
         UUID ownerId = UUID.randomUUID();
-        LocalDateTime openingHours = LocalDateTime.now();
+        String openingHours = "Seg-Sex 11:00-23:00";
 
         assertThrows(IllegalArgumentException.class, () -> new Restaurant(id, "Pizzaria", "Rua A, 123", null, openingHours, ownerId));
     }
@@ -158,7 +157,7 @@ public class RestaurantTest {
     @DisplayName("Deve lançar exceção ao criar com ID do proprietário nulo")
     void shouldThrowExceptionWhenOwnerIdIsNull() {
         UUID id = UUID.randomUUID();
-        LocalDateTime openingHours = LocalDateTime.now();
+        String openingHours = "Seg-Sex 11:00-23:00";
 
         assertThrows(IllegalArgumentException.class, () -> new Restaurant(id, "Pizzaria", "Rua A, 123", "ITALIANO", openingHours, null));
     }
@@ -171,6 +170,6 @@ public class RestaurantTest {
     }
 
     private Restaurant createValidRestaurant() {
-        return new Restaurant(UUID.randomUUID(), "Restaurante Teste", "Rua Teste, 123", "ITALIANA", LocalDateTime.now(), UUID.randomUUID());
+        return new Restaurant(UUID.randomUUID(), "Restaurante Teste", "Rua Teste, 123", "ITALIANA", "Seg-Sex 11:00-23:00", UUID.randomUUID());
     }
 }

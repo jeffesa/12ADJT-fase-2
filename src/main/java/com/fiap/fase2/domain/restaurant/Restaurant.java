@@ -1,6 +1,5 @@
 package com.fiap.fase2.domain.restaurant;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class Restaurant {
@@ -8,13 +7,13 @@ public class Restaurant {
     private String name;
     private String address;
     private String cuisineType;
-    private LocalDateTime openingHours;
+    private String openingHours;
     private UUID ownerId;
 
     public Restaurant() {
     }
 
-    public Restaurant(UUID id, String name, String address, String cuisineType, LocalDateTime openingHours, UUID ownerId) {
+    public Restaurant(UUID id, String name, String address, String cuisineType, String openingHours, UUID ownerId) {
         validateName(name);
         validateAddress(address);
         validateCuisineType(cuisineType);
@@ -64,11 +63,11 @@ public class Restaurant {
         this.cuisineType = cuisineType;
     }
 
-    public LocalDateTime getOpeningHours() {
+    public String getOpeningHours() {
         return openingHours;
     }
 
-    public void setOpeningHours(LocalDateTime openingHours) {
+    public void setOpeningHours(String openingHours) {
         validateOpeningHours(openingHours);
         this.openingHours = openingHours;
     }
@@ -100,9 +99,9 @@ public class Restaurant {
         }
     }
 
-    private void validateOpeningHours(LocalDateTime openingHours) {
-        if (openingHours == null) {
-            throw new IllegalArgumentException("Horário de abertura é obrigatório");
+    private void validateOpeningHours(String openingHours) {
+        if (openingHours == null || openingHours.isBlank()) {
+            throw new IllegalArgumentException("Horário de funcionamento é obrigatório");
         }
     }
 
