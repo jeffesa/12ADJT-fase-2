@@ -24,6 +24,7 @@
         <sonar.organization>jeffesa</sonar.organization>
         <sonar.projectKey>jeffesa_12ADJT-fase-2</sonar.projectKey>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <sonar.exclusions>**/config/**,**/dto/**,**/*Application.java</sonar.exclusions>
     </properties>
 
     <dependencies>
