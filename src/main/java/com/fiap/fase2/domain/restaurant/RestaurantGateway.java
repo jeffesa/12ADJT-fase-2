@@ -9,9 +9,9 @@ public interface RestaurantGateway {
 
     Restaurant update(Restaurant restaurant);
 
-    void delete(String id);
+    void delete(UUID id);
 
-    Optional<Restaurant> findById(String id);
+    Optional<Restaurant> findById(UUID id);
 
     List<Restaurant> findAll();
 
