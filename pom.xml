@@ -24,6 +24,9 @@
         <sonar.organization>jeffesa</sonar.organization>
         <sonar.projectKey>jeffesa_12ADJT-fase-2</sonar.projectKey>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <sonar.exclusions>**/config/**,**/dto/**,**/*Application.java</sonar.exclusions>
+        <sonar.cpd.exclusions>**/persistence/**,**/dto/**</sonar.cpd.exclusions>
+        <sonar.coverage.jacoco.xmlReportPaths>${project.build.directory}/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
     </properties>
 
     <dependencies>
@@ -110,6 +113,12 @@
                         <goals>
                             <goal>report</goal>
                         </goals>
+                        <configuration>
+                            <formats>
+                                <format>XML</format>
+                                <format>HTML</format>
+                            </formats>
+                        </configuration>
                     </execution>
                     <execution>
                         <id>check</id>
