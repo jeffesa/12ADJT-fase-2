@@ -3,6 +3,7 @@ package com.fiap.fase2.domain.restaurant;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -14,9 +15,10 @@ public class RestaurantTest {
     void shouldCreateRestaurantWithValidData() {
         UUID id = UUID.randomUUID();
         UUID ownerId = UUID.randomUUID();
-        String openingHours = "Seg-Sex 11:00-23:00";
+        LocalDateTime openingHours = LocalDateTime.now();
+        LocalDateTime closingTime = LocalDateTime.now().plusHours(12);
 
-        Restaurant restaurant = new Restaurant(id, "Pizzaria Italia", "Rua A, 123", "ITALIANO", openingHours, ownerId);
+        Restaurant restaurant = new Restaurant(id, "Pizzaria Italia", "Rua A, 123", "ITALIANO", openingHours, closingTime, ownerId);
         restaurant.setId(id);
 
         assertEquals(id, restaurant.getId());
@@ -24,6 +26,7 @@ public class RestaurantTest {
         assertEquals("Rua A, 123", restaurant.getAddress());
         assertEquals("ITALIANO", restaurant.getCuisineType());
         assertEquals(openingHours, restaurant.getOpeningHours());
+        assertEquals(closingTime, restaurant.getClosingTime());
         assertEquals(ownerId, restaurant.getOwnerId());
     }
 
@@ -42,13 +45,15 @@ public class RestaurantTest {
         Restaurant restaurant = new Restaurant();
         UUID id = UUID.randomUUID();
         UUID ownerId = UUID.randomUUID();
-        String openingHours = "Seg-Sex 11:00-23:00";
+        LocalDateTime openingHours = LocalDateTime.now();
+        LocalDateTime closingTime = LocalDateTime.now().plusHours(12);
 
         restaurant.setId(id);
         restaurant.setName("Sushi House");
         restaurant.setAddress("Rua B, 456");
         restaurant.setCuisineType("JAPANESE");
         restaurant.setOpeningHours(openingHours);
+        restaurant.setClosingTime(closingTime);
         restaurant.setOwnerId(ownerId);
 
         assertEquals(id, restaurant.getId());
@@ -56,6 +61,7 @@ public class RestaurantTest {
         assertEquals("Rua B, 456", restaurant.getAddress());
         assertEquals("JAPANESE", restaurant.getCuisineType());
         assertEquals(openingHours, restaurant.getOpeningHours());
+        assertEquals(closingTime, restaurant.getClosingTime());
         assertEquals(ownerId, restaurant.getOwnerId());
     }
 
@@ -64,9 +70,10 @@ public class RestaurantTest {
     void shouldThrowExceptionWhenNameIsNull() {
         UUID id = UUID.randomUUID();
         UUID ownerId = UUID.randomUUID();
-        String openingHours = "Seg-Sex 11:00-23:00";
+        LocalDateTime openingHours = LocalDateTime.now();
+        LocalDateTime closingTime = LocalDateTime.now().plusHours(12);
 
-        assertThrows(IllegalArgumentException.class, () -> new Restaurant(id, null, "Rua A, 123", "ITALIANO", openingHours, ownerId));
+        assertThrows(IllegalArgumentException.class, () -> new Restaurant(id, null, "Rua A, 123", "ITALIANO", openingHours, closingTime, ownerId));
     }
 
     @Test
@@ -74,9 +81,10 @@ public class RestaurantTest {
     void shouldThrowExceptionWhenNameIsBlank() {
         UUID id = UUID.randomUUID();
         UUID ownerId = UUID.randomUUID();
-        String openingHours = "Seg-Sex 11:00-23:00";
+        LocalDateTime openingHours = LocalDateTime.now();
+        LocalDateTime closingTime = LocalDateTime.now().plusHours(12);
 
-        assertThrows(IllegalArgumentException.class, () -> new Restaurant(id, "   ", "Rua A, 123", "ITALIANO", openingHours, ownerId));
+        assertThrows(IllegalArgumentException.class, () -> new Restaurant(id, "   ", "Rua A, 123", "ITALIANO", openingHours, closingTime, ownerId));
     }
 
     @Test
@@ -91,9 +99,10 @@ public class RestaurantTest {
     void shouldThrowExceptionWhenAddressIsNull() {
         UUID id = UUID.randomUUID();
         UUID ownerId = UUID.randomUUID();
-        String openingHours = "Seg-Sex 11:00-23:00";
+        LocalDateTime openingHours = LocalDateTime.now();
+        LocalDateTime closingTime = LocalDateTime.now().plusHours(12);
 
-        assertThrows(IllegalArgumentException.class, () -> new Restaurant(id, "Pizzaria", null, "ITALIANO", openingHours, ownerId));
+        assertThrows(IllegalArgumentException.class, () -> new Restaurant(id, "Pizzaria", null, "ITALIANO", openingHours, closingTime, ownerId));
     }
 
     @Test
@@ -101,9 +110,10 @@ public class RestaurantTest {
     void shouldThrowExceptionWhenAddressIsBlank() {
         UUID id = UUID.randomUUID();
         UUID ownerId = UUID.randomUUID();
-        String openingHours = "Seg-Sex 11:00-23:00";
+        LocalDateTime openingHours = LocalDateTime.now();
+        LocalDateTime closingTime = LocalDateTime.now().plusHours(12);
 
-        assertThrows(IllegalArgumentException.class, () -> new Restaurant(id, "Pizzaria", "   ", "ITALIANO", openingHours, ownerId));
+        assertThrows(IllegalArgumentException.class, () -> new Restaurant(id, "Pizzaria", "   ", "ITALIANO", openingHours, closingTime, ownerId));
     }
 
     @Test
@@ -125,9 +135,10 @@ public class RestaurantTest {
     void shouldThrowExceptionWhenCuisineTypeIsNull() {
         UUID id = UUID.randomUUID();
         UUID ownerId = UUID.randomUUID();
-        String openingHours = "Seg-Sex 11:00-23:00";
+        LocalDateTime openingHours = LocalDateTime.now();
+        LocalDateTime closingTime = LocalDateTime.now().plusHours(12);
 
-        assertThrows(IllegalArgumentException.class, () -> new Restaurant(id, "Pizzaria", "Rua A, 123", null, openingHours, ownerId));
+        assertThrows(IllegalArgumentException.class, () -> new Restaurant(id, "Pizzaria", "Rua A, 123", null, openingHours, closingTime, ownerId));
     }
 
     @Test
@@ -142,8 +153,9 @@ public class RestaurantTest {
     void shouldThrowExceptionWhenOpeningHoursIsNull() {
         UUID id = UUID.randomUUID();
         UUID ownerId = UUID.randomUUID();
+        LocalDateTime closingTime = LocalDateTime.now().plusHours(12);
 
-        assertThrows(IllegalArgumentException.class, () -> new Restaurant(id, "Pizzaria", "Rua A, 123", "ITALIANO", null, ownerId));
+        assertThrows(IllegalArgumentException.class, () -> new Restaurant(id, "Pizzaria", "Rua A, 123", "ITALIANO", null, closingTime, ownerId));
     }
 
     @Test
@@ -157,9 +169,10 @@ public class RestaurantTest {
     @DisplayName("Deve lançar exceção ao criar com ID do proprietário nulo")
     void shouldThrowExceptionWhenOwnerIdIsNull() {
         UUID id = UUID.randomUUID();
-        String openingHours = "Seg-Sex 11:00-23:00";
+        LocalDateTime openingHours = LocalDateTime.now();
+        LocalDateTime closingTime = LocalDateTime.now().plusHours(12);
 
-        assertThrows(IllegalArgumentException.class, () -> new Restaurant(id, "Pizzaria", "Rua A, 123", "ITALIANO", openingHours, null));
+        assertThrows(IllegalArgumentException.class, () -> new Restaurant(id, "Pizzaria", "Rua A, 123", "ITALIANO", openingHours, closingTime, null));
     }
 
     @Test
@@ -170,6 +183,6 @@ public class RestaurantTest {
     }
 
     private Restaurant createValidRestaurant() {
-        return new Restaurant(UUID.randomUUID(), "Restaurante Teste", "Rua Teste, 123", "ITALIANA", "Seg-Sex 11:00-23:00", UUID.randomUUID());
+        return new Restaurant(UUID.randomUUID(), "Restaurante Teste", "Rua Teste, 123", "ITALIANA", LocalDateTime.now(), LocalDateTime.now(), UUID.randomUUID());
     }
 }

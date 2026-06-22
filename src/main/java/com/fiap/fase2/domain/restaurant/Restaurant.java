@@ -1,5 +1,6 @@
 package com.fiap.fase2.domain.restaurant;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class Restaurant {
@@ -7,17 +8,19 @@ public class Restaurant {
     private String name;
     private String address;
     private String cuisineType;
-    private String openingHours;
+    private LocalDateTime openingHours;
+    private LocalDateTime closingTime;
     private UUID ownerId;
 
     public Restaurant() {
     }
 
-    public Restaurant(UUID id, String name, String address, String cuisineType, String openingHours, UUID ownerId) {
+    public Restaurant(UUID id, String name, String address, String cuisineType, LocalDateTime openingHours, LocalDateTime closingTime, UUID ownerId) {
         validateName(name);
         validateAddress(address);
         validateCuisineType(cuisineType);
         validateOpeningHours(openingHours);
+        validateClosingTime(closingTime);
         validateOwnerId(ownerId);
 
         this.id = id;
@@ -25,6 +28,7 @@ public class Restaurant {
         this.address = address;
         this.cuisineType = cuisineType;
         this.openingHours = openingHours;
+        this.closingTime = closingTime;
         this.ownerId = ownerId;
     }
 
@@ -63,13 +67,22 @@ public class Restaurant {
         this.cuisineType = cuisineType;
     }
 
-    public String getOpeningHours() {
+    public LocalDateTime getOpeningHours() {
         return openingHours;
     }
 
-    public void setOpeningHours(String openingHours) {
+    public void setOpeningHours(LocalDateTime openingHours) {
         validateOpeningHours(openingHours);
         this.openingHours = openingHours;
+    }
+
+    public LocalDateTime getClosingTime() {
+        return closingTime;
+    }
+
+    public void setClosingTime(LocalDateTime closingTime) {
+        validateClosingTime(closingTime);
+        this.closingTime = closingTime;
     }
 
     public UUID getOwnerId() {
@@ -99,9 +112,15 @@ public class Restaurant {
         }
     }
 
-    private void validateOpeningHours(String openingHours) {
-        if (openingHours == null || openingHours.isBlank()) {
+    private void validateOpeningHours(LocalDateTime openingHours) {
+        if (openingHours == null) {
             throw new IllegalArgumentException("Horário de funcionamento é obrigatório");
+        }
+    }
+
+    private void validateClosingTime(LocalDateTime closingTime) {
+        if (closingTime == null) {
+            throw new IllegalArgumentException("Horário de fechamento é obrigatório");
         }
     }
 
