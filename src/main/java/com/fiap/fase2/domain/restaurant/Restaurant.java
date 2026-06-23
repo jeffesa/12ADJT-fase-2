@@ -9,16 +9,18 @@ public class Restaurant {
     private String address;
     private String cuisineType;
     private LocalDateTime openingHours;
+    private LocalDateTime closingTime;
     private UUID ownerId;
 
     public Restaurant() {
     }
 
-    public Restaurant(UUID id, String name, String address, String cuisineType, LocalDateTime openingHours, UUID ownerId) {
+    public Restaurant(UUID id, String name, String address, String cuisineType, LocalDateTime openingHours, LocalDateTime closingTime, UUID ownerId) {
         validateName(name);
         validateAddress(address);
         validateCuisineType(cuisineType);
         validateOpeningHours(openingHours);
+        validateClosingTime(closingTime);
         validateOwnerId(ownerId);
 
         this.id = id;
@@ -26,6 +28,7 @@ public class Restaurant {
         this.address = address;
         this.cuisineType = cuisineType;
         this.openingHours = openingHours;
+        this.closingTime = closingTime;
         this.ownerId = ownerId;
     }
 
@@ -73,6 +76,15 @@ public class Restaurant {
         this.openingHours = openingHours;
     }
 
+    public LocalDateTime getClosingTime() {
+        return closingTime;
+    }
+
+    public void setClosingTime(LocalDateTime closingTime) {
+        validateClosingTime(closingTime);
+        this.closingTime = closingTime;
+    }
+
     public UUID getOwnerId() {
         return ownerId;
     }
@@ -102,7 +114,13 @@ public class Restaurant {
 
     private void validateOpeningHours(LocalDateTime openingHours) {
         if (openingHours == null) {
-            throw new IllegalArgumentException("Horário de abertura é obrigatório");
+            throw new IllegalArgumentException("Horário de funcionamento é obrigatório");
+        }
+    }
+
+    private void validateClosingTime(LocalDateTime closingTime) {
+        if (closingTime == null) {
+            throw new IllegalArgumentException("Horário de fechamento é obrigatório");
         }
     }
 
