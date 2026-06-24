@@ -857,14 +857,41 @@ Documento com contexto do projeto, decisões técnicas tomadas e resumo do plane
 
 ---
 
+## 📋 ÉPICO 8: Melhorias Identificadas
+
+> Tasks criadas durante o desenvolvimento para corrigir gaps e melhorar a qualidade.
+
+### [TASK-041: UserType — nome deve ser único](#task-041)
+
+**Labels:** `priority: high`, `épico: user-type`, `pontos: 2`, `type: feature`  
+**Milestone:** Sprint 2 - Tipo de Usuário
+
+## 📋 Descrição
+O UserType está aceitando nomes duplicados (ex: dois "CUSTOMER"). O nome deve ser único no banco.
+
+## ✅ Critérios de Aceitação
+- [ ] Adicionar método `findByName(String name)` no UserTypeGateway
+- [ ] Validar unicidade no CreateUserTypeUseCase (lançar BusinessException se já existir)
+- [ ] Validar unicidade no UpdateUserTypeUseCase (excluindo o próprio registro)
+- [ ] Adicionar `@Column(unique = true)` na UserTypeJpaEntity
+- [ ] Adicionar query `findByName` no UserTypeRepository
+- [ ] Implementar no UserTypeJpaGateway
+- [ ] Testes unitários e integração atualizados
+- [ ] Endpoint retorna 422 ao tentar criar/atualizar com nome duplicado
+
+## 🔧 Dependências Técnicas
+- [TASK-010](#task-010) concluída
+
+---
+
 ## 📊 RESUMO DO BACKLOG
 
-**Total de Tasks:** 40  
-**Obrigatórias:** 37 | **Não obrigatórias:** 3  
-**Estimativa Total:** ~108 pontos
+**Total de Tasks:** 41  
+**Obrigatórias:** 37 | **Não obrigatórias:** 3 | **Melhorias:** 1  
+**Estimativa Total:** ~110 pontos
 
 ### Por Prioridade:
-- **Alta:** 37 tasks (obrigatórias)
+- **Alta:** 38 tasks (obrigatórias + melhorias)
 - **Média:** 3 tasks (não obrigatórias)
 
 ### Por Épico:
@@ -877,6 +904,7 @@ Documento com contexto do projeto, decisões técnicas tomadas e resumo do plane
 | 5. CRUD Item do Cardápio | 6 | 17 |
 | 6. Documentação, Qualidade e Entregáveis | 9 | 21 |
 | 7. Extras (Não Obrigatórios) | 3 | 8 |
+| 8. Melhorias Identificadas | 1 | 2 |
 
 ---
 
@@ -885,7 +913,7 @@ Documento com contexto do projeto, decisões técnicas tomadas e resumo do plane
 | Sprint | Descrição | Tasks |
 |--------|-----------|-------|
 | Sprint 1 | Fundação | [001](#task-001) → [005](#task-005) |
-| Sprint 2 | Tipo de Usuário | [006](#task-006) → [012](#task-012) |
+| Sprint 2 | Tipo de Usuário | [006](#task-006) → [012](#task-012), [041](#task-041) |
 | Sprint 3 | Usuário | [013](#task-013) → [016](#task-016) |
 | Sprint 4 | Restaurante | [017](#task-017) → [022](#task-022) |
 | Sprint 5 | Cardápio | [023](#task-023) → [028](#task-028) |
@@ -901,3 +929,4 @@ Documento com contexto do projeto, decisões técnicas tomadas e resumo do plane
 - Recomenda-se seguir a ordem sugerida para evitar dependências bloqueantes
 - A estrutura Clean Architecture segue a referência do professor (domain → application → infra)
 - Tasks 038, 039 e 040 são **NÃO OBRIGATÓRIAS** — não exigidas no PDF da Fase 2
+- Novas melhorias identificadas durante o desenvolvimento são adicionadas no Épico 8
