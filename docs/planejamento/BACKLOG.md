@@ -884,6 +884,27 @@ O UserType está aceitando nomes duplicados (ex: dois "CUSTOMER"). O nome deve s
 
 ---
 
+### [TASK-042: MenuItem — adicionar ManyToOne com RestaurantJpaEntity](#task-042)
+
+**Labels:** `priority: medium`, `épico: menu-item`, `pontos: 1`, `type: feature`  
+**Milestone:** Sprint 5 - Cardápio
+
+## 📋 Descrição
+Atualmente MenuItemJpaEntity usa UUID direto para restaurantId. Após TASK-019 (RestaurantJpaEntity) ser concluída, adicionar relacionamento ManyToOne.
+
+## ✅ Critérios de Aceitação
+- [ ] Substituir `UUID restaurantId` por `@ManyToOne RestaurantJpaEntity restaurant` na MenuItemJpaEntity
+- [ ] Atualizar MenuItemJpaGateway (mapeamento)
+- [ ] Testes atualizados
+
+## 🔧 Dependências Técnicas
+- [TASK-019](#task-019) concluída
+- [TASK-025](#task-025) concluída
+
+---
+
+---
+
 ## 📊 RESUMO DO BACKLOG
 
 **Total de Tasks:** 41  
