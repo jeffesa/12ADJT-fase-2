@@ -164,4 +164,22 @@ class UserTypeIntegrationTest {
         mockMvc.perform(delete(BASE_URL + "/00000000-0000-0000-0000-000000000000"))
                 .andExpect(status().isNotFound());
     }
+
+    @Test
+    @Order(20)
+    @DisplayName("POST - Deve retornar 422 ao criar com nome duplicado")
+    void shouldReturn422WhenNameAlreadyExists() throws Exception {
+        // Cria primeiro
+        mockMvc.perform(post(BASE_URL)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(Map.of("name", "DUPLICADO"))))
+                .andExpect(status().isCreated());
+
+        // Tenta criar com mesmo nome
+        mockMvc.perform(post(BASE_URL)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(Map.of("name", "DUPLICADO"))))
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(jsonPath("$.detail").value("Tipo de usuário já existe com nome: DUPLICADO"));
+    }
 }
