@@ -42,6 +42,11 @@ public class UserTypeJpaGateway implements UserTypeGateway {
     }
 
     @Override
+    public Optional<UserType> findByName(String name) {
+        return repository.findByName(name).map(this::toDomain);
+    }
+
+    @Override
     public List<UserType> findAll() {
         return repository.findAll().stream()
                 .map(this::toDomain)
