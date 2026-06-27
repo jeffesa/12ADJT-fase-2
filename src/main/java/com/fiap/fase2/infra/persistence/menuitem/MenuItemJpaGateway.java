@@ -56,11 +56,10 @@ public class MenuItemJpaGateway implements MenuItemGateway {
     }
 
     private MenuItem toDomain(MenuItemJpaEntity entity) {
-        UUID restaurantId = entity.getRestaurant() != null ? entity.getRestaurant().getId() : null;
         return new MenuItem(
                 entity.getId(), entity.getName(), entity.getDescription(),
                 entity.getPrice(), entity.isDineInOnly(), entity.getPhotoPath(),
-                restaurantId
+                entity.getRestaurant().getId()
         );
     }
 }
