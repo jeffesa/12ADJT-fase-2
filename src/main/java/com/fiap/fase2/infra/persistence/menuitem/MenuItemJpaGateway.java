@@ -2,6 +2,7 @@ package com.fiap.fase2.infra.persistence.menuitem;
 
 import com.fiap.fase2.domain.menuitem.MenuItem;
 import com.fiap.fase2.domain.menuitem.MenuItemGateway;
+import com.fiap.fase2.infra.persistence.restaurant.RestaurantJpaEntity;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -45,10 +46,12 @@ public class MenuItemJpaGateway implements MenuItemGateway {
     }
 
     private MenuItemJpaEntity toJpaEntity(MenuItem menuItem) {
+        RestaurantJpaEntity restaurantRef = new RestaurantJpaEntity();
+        restaurantRef.setId(menuItem.getRestaurantId());
         return new MenuItemJpaEntity(
                 menuItem.getId(), menuItem.getName(), menuItem.getDescription(),
                 menuItem.getPrice(), menuItem.isDineInOnly(), menuItem.getPhotoPath(),
-                menuItem.getRestaurantId()
+                restaurantRef
         );
     }
 
@@ -56,7 +59,7 @@ public class MenuItemJpaGateway implements MenuItemGateway {
         return new MenuItem(
                 entity.getId(), entity.getName(), entity.getDescription(),
                 entity.getPrice(), entity.isDineInOnly(), entity.getPhotoPath(),
-                entity.getRestaurantId()
+                entity.getRestaurant().getId()
         );
     }
 }
