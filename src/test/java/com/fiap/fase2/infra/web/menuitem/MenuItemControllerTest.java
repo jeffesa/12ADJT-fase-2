@@ -124,4 +124,55 @@ class MenuItemControllerTest {
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest());
     }
+
+    @Test
+    @DisplayName("POST - deve retornar 400 com preço zero")
+    void shouldReturn400WhenPriceZero() throws Exception {
+        UUID restaurantId = UUID.randomUUID();
+        MenuItemRequest request = new MenuItemRequest("Pizza", "desc", BigDecimal.ZERO, false, null);
+
+        mockMvc.perform(post("/api/v1/restaurants/" + restaurantId + "/menu-items")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.campos.price").exists());
+    }
+
+    @Test
+    @DisplayName("POST - deve retornar 400 com preço negativo")
+    void shouldReturn400WhenPriceNegative() throws Exception {
+        UUID restaurantId = UUID.randomUUID();
+        MenuItemRequest request = new MenuItemRequest("Pizza", "desc", new BigDecimal("-10"), false, null);
+
+        mockMvc.perform(post("/api/v1/restaurants/" + restaurantId + "/menu-items")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.campos.price").exists());
+    }
+
+    @Test
+    @DisplayName("POST - deve retornar 404 com restaurante inexistente")
+    void shouldReturn404WhenRestaurantNotFound() throws Exception {
+        UUID restaurantId = UUID.randomUUID();
+        when(createUseCase.execute(any(), any(), any(), anyBoolean(), any(), eq(restaurantId)))
+                .thenThrow(new EntityNotFoundException("Restaurante não encontrado"));
+
+        MenuItemRequest request = new MenuItemRequest("Pizza", "desc", new BigDecimal("39.90"), false, null);
+
+        mockMvc.perform(post("/api/v1/restaurants/" + restaurantId + "/menu-items")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("DELETE - deve retornar 404 com ID inexistente")
+    void shouldReturn404WhenDeleteNotFound() throws Exception {
+        UUID id = UUID.randomUUID();
+        doThrow(new EntityNotFoundException("Não encontrado")).when(deleteUseCase).execute(id);
+
+        mockMvc.perform(delete("/api/v1/menu-items/" + id))
+                .andExpect(status().isNotFound());
+    }
 }
