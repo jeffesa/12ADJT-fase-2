@@ -38,6 +38,9 @@ bin/
 # Kiro
 .kiro/
 
+# Workspace files
+*.code-workspace
+
 # macOS
 .DS_Store
 
@@ -54,3 +57,4 @@ spring-boot-devtools.properties
 
 # JaCoCo
 jacoco.exec
+*.code-workspace
