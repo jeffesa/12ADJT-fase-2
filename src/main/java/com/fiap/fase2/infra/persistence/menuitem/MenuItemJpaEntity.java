@@ -1,5 +1,6 @@
 package com.fiap.fase2.infra.persistence.menuitem;
 
+import com.fiap.fase2.infra.persistence.restaurant.RestaurantJpaEntity;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
@@ -25,21 +26,22 @@ public class MenuItemJpaEntity {
 
     private String photoPath;
 
-    @Column(name = "restaurant_id", nullable = false)
-    private UUID restaurantId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "restaurant_id", nullable = false)
+    private RestaurantJpaEntity restaurant;
 
     public MenuItemJpaEntity() {
     }
 
     public MenuItemJpaEntity(UUID id, String name, String description, BigDecimal price,
-                             boolean dineInOnly, String photoPath, UUID restaurantId) {
+                             boolean dineInOnly, String photoPath, RestaurantJpaEntity restaurant) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.price = price;
         this.dineInOnly = dineInOnly;
         this.photoPath = photoPath;
-        this.restaurantId = restaurantId;
+        this.restaurant = restaurant;
     }
 
     public UUID getId() { return id; }
@@ -54,6 +56,6 @@ public class MenuItemJpaEntity {
     public void setDineInOnly(boolean dineInOnly) { this.dineInOnly = dineInOnly; }
     public String getPhotoPath() { return photoPath; }
     public void setPhotoPath(String photoPath) { this.photoPath = photoPath; }
-    public UUID getRestaurantId() { return restaurantId; }
-    public void setRestaurantId(UUID restaurantId) { this.restaurantId = restaurantId; }
+    public RestaurantJpaEntity getRestaurant() { return restaurant; }
+    public void setRestaurant(RestaurantJpaEntity restaurant) { this.restaurant = restaurant; }
 }
