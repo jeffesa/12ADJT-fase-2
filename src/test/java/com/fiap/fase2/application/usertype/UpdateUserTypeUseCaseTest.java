@@ -36,6 +36,7 @@ class UpdateUserTypeUseCaseTest {
         UUID id = UUID.randomUUID();
         UserType existing = new UserType(id, "CUSTOMER");
         when(gateway.findById(id)).thenReturn(Optional.of(existing));
+        when(gateway.findByName("RESTAURANT_OWNER")).thenReturn(Optional.empty());
         when(gateway.update(any(UserType.class))).thenAnswer(inv -> inv.getArgument(0));
 
         UserType result = useCase.execute(id, "RESTAURANT_OWNER");
@@ -52,5 +53,36 @@ class UpdateUserTypeUseCaseTest {
 
         assertThrows(EntityNotFoundException.class, () -> useCase.execute(id, "NOVO"));
         verify(gateway, never()).update(any());
+    }
+
+    @Test
+    @DisplayName("Deve lançar exceção ao atualizar com nome já existente de outro tipo")
+    void shouldThrowExceptionWhenNameAlreadyExists() {
+        UUID id = UUID.randomUUID();
+        UUID otherId = UUID.randomUUID();
+        UserType existing = new UserType(id, "CUSTOMER");
+        UserType other = new UserType(otherId, "RESTAURANT_OWNER");
+
+        when(gateway.findById(id)).thenReturn(Optional.of(existing));
+        when(gateway.findByName("RESTAURANT_OWNER")).thenReturn(Optional.of(other));
+
+        assertThrows(com.fiap.fase2.domain.shared.BusinessException.class, () -> useCase.execute(id, "RESTAURANT_OWNER"));
+        verify(gateway, never()).update(any());
+    }
+
+    @Test
+    @DisplayName("Deve permitir atualizar mantendo o próprio nome")
+    void shouldAllowUpdateWithSameName() {
+        UUID id = UUID.randomUUID();
+        UserType existing = new UserType(id, "CUSTOMER");
+
+        when(gateway.findById(id)).thenReturn(Optional.of(existing));
+        when(gateway.findByName("CUSTOMER")).thenReturn(Optional.of(existing));
+        when(gateway.update(any(UserType.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        UserType result = useCase.execute(id, "CUSTOMER");
+
+        assertEquals("CUSTOMER", result.getName());
+        verify(gateway).update(any());
     }
 }

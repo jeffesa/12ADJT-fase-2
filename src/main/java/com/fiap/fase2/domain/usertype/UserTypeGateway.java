@@ -14,5 +14,7 @@ public interface UserTypeGateway {
 
     Optional<UserType> findById(UUID id);
 
+    Optional<UserType> findByName(String name);
+
     List<UserType> findAll();
 }
