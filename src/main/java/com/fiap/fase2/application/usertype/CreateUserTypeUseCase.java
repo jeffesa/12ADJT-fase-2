@@ -1,5 +1,6 @@
 package com.fiap.fase2.application.usertype;
 
+import com.fiap.fase2.domain.shared.BusinessException;
 import com.fiap.fase2.domain.usertype.UserType;
 import com.fiap.fase2.domain.usertype.UserTypeGateway;
 
@@ -14,6 +15,10 @@ public class CreateUserTypeUseCase {
     }
 
     public UserType execute(String name) {
+        userTypeGateway.findByName(name).ifPresent(existing -> {
+            throw new BusinessException("Tipo de usuário já existe com nome: " + name);
+        });
+
         UserType userType = new UserType(UUID.randomUUID(), name);
         return userTypeGateway.create(userType);
     }

@@ -9,6 +9,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -29,6 +32,7 @@ class CreateUserTypeUseCaseTest {
     @Test
     @DisplayName("Deve criar tipo de usuário com sucesso")
     void shouldCreateUserType() {
+        when(gateway.findByName("CUSTOMER")).thenReturn(Optional.empty());
         when(gateway.create(any(UserType.class))).thenAnswer(inv -> inv.getArgument(0));
 
         UserType result = useCase.execute("CUSTOMER");
@@ -50,6 +54,15 @@ class CreateUserTypeUseCaseTest {
     @DisplayName("Deve lançar exceção ao criar com nome nulo")
     void shouldThrowExceptionWhenNameIsNull() {
         assertThrows(IllegalArgumentException.class, () -> useCase.execute(null));
+        verify(gateway, never()).create(any());
+    }
+
+    @Test
+    @DisplayName("Deve lançar exceção ao criar com nome duplicado")
+    void shouldThrowExceptionWhenNameAlreadyExists() {
+        when(gateway.findByName("CUSTOMER")).thenReturn(Optional.of(new UserType(UUID.randomUUID(), "CUSTOMER")));
+
+        assertThrows(com.fiap.fase2.domain.shared.BusinessException.class, () -> useCase.execute("CUSTOMER"));
         verify(gateway, never()).create(any());
     }
 }
