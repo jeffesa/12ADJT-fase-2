@@ -120,3 +120,62 @@ Collection completa de testes para a API de Gestão de Restaurantes.
 ## Scripts automatizados
 
 Os requests de criação possuem scripts post-response que salvam IDs automaticamente nas variáveis da collection. Não é necessário copiar/colar IDs manualmente.
+
+## Testes automatizados (Assertions)
+
+Cada request possui assertions `pm.test()` que validam:
+- **Status code esperado** — baseado no título do request (✅ 201, ❌ 400, ❌ 404, ❌ 422)
+- **Validações de body** — verifica campos como `id`, `name`, arrays, campo `detail` em erros
+
+As pastas de Usuários, Autenticação e MenuItem incluem requests de "setup" que criam os dados necessários (UserType, User, Restaurant) antes dos testes. Assim a collection pode ser executada do zero em sequência.
+
+## Executar via Newman (CLI)
+
+Newman permite executar a collection inteira via terminal e gerar um relatório HTML profissional com pass/fail de cada assertion.
+
+### Pré-requisitos
+
+```bash
+# Node.js (>= 16)
+node --version
+
+# Instalar Newman e o reporter HTML
+npm install -g newman newman-reporter-htmlextra
+```
+
+### Executar
+
+```bash
+# Via run.sh (opção 7 do menu)
+./run.sh
+
+# Ou diretamente
+newman run "docs/api-collection/FIAP Fase 2 - Gestao de Restaurantes.postman_collection.json" \
+  --folder local \
+  -r htmlextra \
+  --reporter-htmlextra-export docs/api-collection/report.html
+```
+
+### Abrir relatório
+
+```bash
+open docs/api-collection/report.html
+```
+
+### Requisitos para execução
+
+| Requisito | Descrição |
+|-----------|-----------|
+| Aplicação rodando | `localhost:8080` (via `./run.sh` opção 1, 2 ou 4) |
+| Node.js | >= 16 |
+| newman | `npm install -g newman` |
+| newman-reporter-htmlextra | `npm install -g newman-reporter-htmlextra` |
+
+### O que o relatório mostra
+
+- **Summary** — total de requests, assertions, tempo de execução
+- **Passed/Failed** — cada assertion individual com status verde/vermelho
+- **Request details** — headers, body, response para debug
+- **Tempo por request** — identificar endpoints lentos
+
+> **Nota:** Os requests de MenuItem dependem do endpoint `POST /api/v1/restaurants` (TASK-020 do outro dev). Até que esteja implementado, os testes de MenuItem falharão em cascata.

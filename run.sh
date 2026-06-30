@@ -118,6 +118,23 @@ run_tests() {
   mvn clean verify
 }
 
+run_collection() {
+  echo ""
+  echo "📬 Executando Collection Postman (Newman)..."
+  echo ""
+  if ! command -v newman &>/dev/null; then
+    echo "❌ Newman não instalado. Instale com: npm install -g newman newman-reporter-htmlextra"
+    return 1
+  fi
+  newman run "docs/api-collection/FIAP Fase 2 - Gestao de Restaurantes.postman_collection.json" \
+    --folder local \
+    -r htmlextra \
+    --reporter-htmlextra-export docs/api-collection/report.html
+  echo ""
+  echo "📊 Relatório gerado em: docs/api-collection/report.html"
+  echo "   Abra no navegador: open docs/api-collection/report.html"
+}
+
 show_menu() {
   echo ""
   echo "╔══════════════════════════════════════════╗"
@@ -129,7 +146,8 @@ show_menu() {
   echo "║  4) Docker Compose (build + up)         ║"
   echo "║  5) Docker Compose (stop)               ║"
   echo "║  6) Rodar testes (mvn clean verify)     ║"
-  echo "║  7) Kill porta 8080                     ║"
+  echo "║  7) Rodar collection (Newman)           ║"
+  echo "║  8) Kill porta 8080                     ║"
   echo "║  0) Sair                                ║"
   echo "╚══════════════════════════════════════════╝"
   echo ""
@@ -142,7 +160,8 @@ show_menu() {
     4) run_docker ;;
     5) stop_docker ;;
     6) run_tests ;;
-    7) kill_port 8080 ;;
+    7) run_collection ;;
+    8) kill_port 8080 ;;
     0) echo "👋 Até mais!" && exit 0 ;;
     *) echo "❌ Opção inválida." && show_menu ;;
   esac
@@ -155,6 +174,7 @@ if [ -n "$1" ]; then
     docker) run_docker ;;
     stop) stop_docker ;;
     tests) run_tests ;;
+    collection) run_collection ;;
     kill) kill_port 8080 ;;
     *) echo "Uso: ./run.sh [dev|test|prod|docker|stop|tests|kill]" ;;
   esac
