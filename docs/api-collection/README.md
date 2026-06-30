@@ -153,13 +153,13 @@ npm install -g newman newman-reporter-htmlextra
 newman run "docs/api-collection/FIAP Fase 2 - Gestao de Restaurantes.postman_collection.json" \
   --folder local \
   -r htmlextra \
-  --reporter-htmlextra-export docs/api-collection/report.html
+  --reporter-htmlextra-export docs/api-collection/evidencia-testes-api.html
 ```
 
 ### Abrir relatório
 
 ```bash
-open docs/api-collection/report.html
+open docs/api-collection/evidencia-testes-api.html
 ```
 
 ### Requisitos para execução
@@ -179,3 +179,44 @@ open docs/api-collection/report.html
 - **Tempo por request** — identificar endpoints lentos
 
 > **Nota:** Os requests de MenuItem dependem do endpoint `POST /api/v1/restaurants` (TASK-020 do outro dev). Até que esteja implementado, os testes de MenuItem falharão em cascata.
+
+## Executar via Shell Script (sem dependências externas)
+
+Alternativa ao Newman para ambientes corporativos com restrições de instalação. Usa apenas `curl` e `jq`. Está integrado no `run.sh` (opção 8).
+
+### Pré-requisitos
+
+| Requisito | Descrição |
+|-----------|-----------|
+| Aplicação rodando | `localhost:8080` |
+| curl | Já vem instalado no macOS/Linux |
+| jq | `brew install jq` (mac) ou `apt install jq` (linux) |
+
+### Executar
+
+```bash
+# Via menu interativo (opção 8)
+./run.sh
+
+# Via argumento direto
+./run.sh test-api
+```
+
+### O que faz
+
+- Executa todos os endpoints em sequência (UserType, User, Auth, MenuItem)
+- Valida status code esperado vs recebido para cada request
+- Salva IDs automaticamente entre requests (simula variáveis do Postman)
+- Detecta se endpoint de Restaurant está disponível — se não, pula testes de MenuItem
+- Mostra resumo final com total/passou/falhou
+- Exit code 1 se algum teste falhar (útil para CI/CD)
+
+### Diferenças entre Newman e Shell Script
+
+| Característica | Newman | Shell Script |
+|----------------|--------|--------------|
+| Dependências | Node.js, newman, htmlextra | curl, jq |
+| Relatório HTML | ✅ Sim | ❌ Não (apenas terminal) |
+| Total de testes | 48 requests (81 assertions) | ~28-37 testes |
+| Instalação global | Necessária | Não necessária |
+| Ambiente corporativo | Pode ser bloqueado | Funciona em qualquer máquina |
