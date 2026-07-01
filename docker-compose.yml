@@ -5,7 +5,7 @@ services:
     image: postgres:15
     container_name: fiap-fase2-postgres
     environment:
-      POSTGRES_DB: fase2db
+      POSTGRES_DB: fiap_fase2
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       TZ: America/Sao_Paulo
@@ -29,7 +29,7 @@ services:
     container_name: fiap-fase2-app
     environment:
       SPRING_PROFILES_ACTIVE: prod
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/fase2db
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/fiap_fase2
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: postgres
       SERVER_PORT: 8080
@@ -50,7 +50,6 @@ services:
 
 volumes:
   fiap_fase2_postgres_data:
-
 networks:
   fiapnet:
     driver: bridge
