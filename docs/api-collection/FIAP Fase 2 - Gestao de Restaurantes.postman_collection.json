@@ -151,6 +151,56 @@
           ]
         },
         {
+          "name": "Restaurantes",
+          "item": [
+            {
+              "name": "Criar Restaurante ✅ 201",
+              "event": [{"listen": "test", "script": {"exec": ["var json = pm.response.json();", "if (json.id) { pm.collectionVariables.set('restaurantId', json.id); }"]}}],
+              "request": { "method": "POST", "url": "{{localUrl}}/api/v1/restaurants", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Pizzaria do João\",\n  \"address\": \"Rua das Flores, 123\",\n  \"cuisineType\": \"Italiana\",\n  \"openingHours\": \"11:00\",\n  \"closingTime\": \"23:00\",\n  \"ownerId\": \"{{userId}}\"\n}"} }
+            },
+            {
+              "name": "Criar Restaurante - Dados inválidos ❌ 400",
+              "request": { "method": "POST", "url": "{{localUrl}}/api/v1/restaurants", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"\",\n  \"address\": \"\",\n  \"cuisineType\": \"\",\n  \"openingHours\": \"25:00\",\n  \"closingTime\": \"26:00\",\n  \"ownerId\": null\n}"} }
+            },
+            {
+              "name": "Listar Restaurantes ✅ 200",
+              "request": { "method": "GET", "url": "{{localUrl}}/api/v1/restaurants" }
+            },
+            {
+              "name": "Buscar Restaurante por ID ✅ 200",
+              "request": { "method": "GET", "url": "{{localUrl}}/api/v1/restaurants/{{restaurantId}}" }
+            },
+            {
+              "name": "Buscar Restaurante - ID inexistente ❌ 404",
+              "request": { "method": "GET", "url": "{{localUrl}}/api/v1/restaurants/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee" }
+            },
+            {
+              "name": "Buscar Restaurante por Owner ✅ 200",
+              "request": { "method": "GET", "url": "{{localUrl}}/api/v1/restaurants/owner/{{userId}}" }
+            },
+            {
+              "name": "Buscar Restaurante - Owner inexistente ❌ 404",
+              "request": { "method": "GET", "url": "{{localUrl}}/api/v1/restaurants/owner/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee" }
+            },
+            {
+              "name": "Atualizar Restaurante ✅ 200",
+              "request": { "method": "PUT", "url": "{{localUrl}}/api/v1/restaurants/{{restaurantId}}", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Pizzaria do João - Atualizado\",\n  \"address\": \"Rua Nova, 456\",\n  \"cuisineType\": \"Italiana\",\n  \"openingHours\": \"12:00\",\n  \"closingTime\": \"00:00\"\n}"} }
+            },
+            {
+              "name": "Atualizar Restaurante - ID inexistente ❌ 404",
+              "request": { "method": "PUT", "url": "{{localUrl}}/api/v1/restaurants/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Novo Nome\",\n  \"address\": \"Rua Teste\",\n  \"cuisineType\": \"Teste\",\n  \"openingHours\": \"11:00\",\n  \"closingTime\": \"23:00\"\n}"} }
+            },
+            {
+              "name": "Deletar Restaurante ✅ 204",
+              "request": { "method": "DELETE", "url": "{{localUrl}}/api/v1/restaurants/{{restaurantId}}" }
+            },
+            {
+              "name": "Deletar Restaurante - ID inexistente ❌ 404",
+              "request": { "method": "DELETE", "url": "{{localUrl}}/api/v1/restaurants/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee" }
+            }
+          ]
+        },
+        {
           "name": "Cardápio (MenuItem)",
           "item": [
             {
@@ -232,9 +282,39 @@
               "name": "Listar Usuários ✅ 200",
               "request": { "method": "GET", "url": "{{prodUrl}}/api/v1/users" }
             }
-          ]
-        }
-      ]
-    }
-  ]
-}
+           ]
+         },
+         {
+           "name": "Restaurantes",
+           "item": [
+             {
+               "name": "Criar Restaurante ✅ 201",
+               "event": [{"listen": "test", "script": {"exec": ["var json = pm.response.json();", "if (json.id) { pm.collectionVariables.set('restaurantId', json.id); }"]}}],
+               "request": { "method": "POST", "url": "{{prodUrl}}/api/v1/restaurants", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Pizzaria do João\",\n  \"address\": \"Rua das Flores, 123\",\n  \"cuisineType\": \"Italiana\",\n  \"openingHours\": \"11:00\",\n  \"closingTime\": \"23:00\",\n  \"ownerId\": \"{{userId}}\"\n}"} }
+             },
+             {
+               "name": "Listar Restaurantes ✅ 200",
+               "request": { "method": "GET", "url": "{{prodUrl}}/api/v1/restaurants" }
+             },
+             {
+               "name": "Buscar Restaurante por ID ✅ 200",
+               "request": { "method": "GET", "url": "{{prodUrl}}/api/v1/restaurants/{{restaurantId}}" }
+             },
+             {
+               "name": "Buscar Restaurante por Owner ✅ 200",
+               "request": { "method": "GET", "url": "{{prodUrl}}/api/v1/restaurants/owner/{{userId}}" }
+             },
+             {
+               "name": "Atualizar Restaurante ✅ 200",
+               "request": { "method": "PUT", "url": "{{prodUrl}}/api/v1/restaurants/{{restaurantId}}", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Pizzaria do João - Atualizado\",\n  \"address\": \"Rua Nova, 456\",\n  \"cuisineType\": \"Italiana\",\n  \"openingHours\": \"12:00\",\n  \"closingTime\": \"00:00\"\n}"} }
+             },
+             {
+               "name": "Deletar Restaurante ✅ 204",
+               "request": { "method": "DELETE", "url": "{{prodUrl}}/api/v1/restaurants/{{restaurantId}}" }
+             }
+           ]
+         }
+       ]
+     }
+   ]
+ }
