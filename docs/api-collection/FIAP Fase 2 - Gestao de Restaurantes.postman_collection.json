@@ -20,7 +20,8 @@
           "name": "Health Check",
           "item": [
             {
-              "name": "Health",
+              "name": "Health ✅ 200",
+              "event": [{"listen": "test", "script": {"exec": ["pm.test('Status code is 200', function () {", "    pm.response.to.have.status(200);", "});", "pm.test('Response has status UP', function () {", "    var json = pm.response.json();", "    pm.expect(json.status).to.eql('UP');", "});"]}}],
               "request": { "method": "GET", "url": "{{localUrl}}/actuator/health" }
             }
           ]
@@ -30,51 +31,62 @@
           "item": [
             {
               "name": "Criar Tipo - CUSTOMER ✅ 201",
-              "event": [{"listen": "test", "script": {"exec": ["var json = pm.response.json();", "if (json.id) { pm.collectionVariables.set('userTypeId', json.id); }"]}}],
+              "event": [{"listen": "test", "script": {"exec": ["pm.test('Status code is 201', function () {", "    pm.response.to.have.status(201);", "});", "pm.test('Response has id', function () {", "    var json = pm.response.json();", "    pm.expect(json.id).to.not.be.undefined;", "    pm.collectionVariables.set('userTypeId', json.id);", "});", "pm.test('Response has name CUSTOMER', function () {", "    var json = pm.response.json();", "    pm.expect(json.name).to.eql('CUSTOMER');", "});"]}}],
               "request": { "method": "POST", "url": "{{localUrl}}/api/v1/user-types", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"CUSTOMER\"\n}"} }
             },
             {
               "name": "Criar Tipo - RESTAURANT_OWNER ✅ 201",
+              "event": [{"listen": "test", "script": {"exec": ["pm.test('Status code is 201', function () {", "    pm.response.to.have.status(201);", "});", "pm.test('Response has id', function () {", "    var json = pm.response.json();", "    pm.expect(json.id).to.not.be.undefined;", "});", "pm.test('Response has name RESTAURANT_OWNER', function () {", "    var json = pm.response.json();", "    pm.expect(json.name).to.eql('RESTAURANT_OWNER');", "});"]}}],
               "request": { "method": "POST", "url": "{{localUrl}}/api/v1/user-types", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"RESTAURANT_OWNER\"\n}"} }
             },
             {
               "name": "Criar Tipo - Nome duplicado ❌ 422",
+              "event": [{"listen": "test", "script": {"exec": ["pm.test('Status code is 422', function () {", "    pm.response.to.have.status(422);", "});", "pm.test('Response has error details', function () {", "    var json = pm.response.json();", "    pm.expect(json.detail).to.not.be.undefined;", "});"]}}],
               "request": { "method": "POST", "url": "{{localUrl}}/api/v1/user-types", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"CUSTOMER\"\n}"} }
             },
             {
               "name": "Criar Tipo - Nome vazio ❌ 400",
+              "event": [{"listen": "test", "script": {"exec": ["pm.test('Status code is 400', function () {", "    pm.response.to.have.status(400);", "});"]}}],
               "request": { "method": "POST", "url": "{{localUrl}}/api/v1/user-types", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"\"\n}"} }
             },
             {
               "name": "Listar Tipos ✅ 200",
+              "event": [{"listen": "test", "script": {"exec": ["pm.test('Status code is 200', function () {", "    pm.response.to.have.status(200);", "});", "pm.test('Response is an array', function () {", "    var json = pm.response.json();", "    pm.expect(json).to.be.an('array');", "    pm.expect(json.length).to.be.greaterThan(0);", "});"]}}],
               "request": { "method": "GET", "url": "{{localUrl}}/api/v1/user-types" }
             },
             {
               "name": "Buscar Tipo por ID ✅ 200",
+              "event": [{"listen": "test", "script": {"exec": ["pm.test('Status code is 200', function () {", "    pm.response.to.have.status(200);", "});", "pm.test('Response has correct id', function () {", "    var json = pm.response.json();", "    pm.expect(json.id).to.eql(pm.collectionVariables.get('userTypeId'));", "});"]}}],
               "request": { "method": "GET", "url": "{{localUrl}}/api/v1/user-types/{{userTypeId}}" }
             },
             {
               "name": "Buscar Tipo - ID inexistente ❌ 404",
+              "event": [{"listen": "test", "script": {"exec": ["pm.test('Status code is 404', function () {", "    pm.response.to.have.status(404);", "});"]}}],
               "request": { "method": "GET", "url": "{{localUrl}}/api/v1/user-types/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee" }
             },
             {
               "name": "Atualizar Tipo ✅ 200",
+              "event": [{"listen": "test", "script": {"exec": ["pm.test('Status code is 200', function () {", "    pm.response.to.have.status(200);", "});", "pm.test('Response has updated name', function () {", "    var json = pm.response.json();", "    pm.expect(json.name).to.eql('ADMIN');", "});"]}}],
               "request": { "method": "PUT", "url": "{{localUrl}}/api/v1/user-types/{{userTypeId}}", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"ADMIN\"\n}"} }
             },
             {
               "name": "Atualizar Tipo - Nome duplicado ❌ 422",
+              "event": [{"listen": "test", "script": {"exec": ["pm.test('Status code is 422', function () {", "    pm.response.to.have.status(422);", "});", "pm.test('Response has error details', function () {", "    var json = pm.response.json();", "    pm.expect(json.detail).to.not.be.undefined;", "});"]}}],
               "request": { "method": "PUT", "url": "{{localUrl}}/api/v1/user-types/{{userTypeId}}", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"RESTAURANT_OWNER\"\n}"} }
             },
             {
               "name": "Atualizar Tipo - ID inexistente ❌ 404",
+              "event": [{"listen": "test", "script": {"exec": ["pm.test('Status code is 404', function () {", "    pm.response.to.have.status(404);", "});"]}}],
               "request": { "method": "PUT", "url": "{{localUrl}}/api/v1/user-types/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"NOVO\"\n}"} }
             },
             {
               "name": "Deletar Tipo ✅ 204",
+              "event": [{"listen": "test", "script": {"exec": ["pm.test('Status code is 204', function () {", "    pm.response.to.have.status(204);", "});"]}}],
               "request": { "method": "DELETE", "url": "{{localUrl}}/api/v1/user-types/{{userTypeId}}" }
             },
             {
               "name": "Deletar Tipo - ID inexistente ❌ 404",
+              "event": [{"listen": "test", "script": {"exec": ["pm.test('Status code is 404', function () {", "    pm.response.to.have.status(404);", "});"]}}],
               "request": { "method": "DELETE", "url": "{{localUrl}}/api/v1/user-types/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee" }
             }
           ]
@@ -83,44 +95,58 @@
           "name": "Usuários",
           "item": [
             {
+              "name": "Criar Tipo para Usuário ✅ 201",
+              "event": [{"listen": "test", "script": {"exec": ["pm.test('Status code is 201', function () {", "    pm.response.to.have.status(201);", "});", "pm.test('Save userTypeId', function () {", "    var json = pm.response.json();", "    pm.expect(json.id).to.not.be.undefined;", "    pm.collectionVariables.set('userTypeId', json.id);", "});"]}}],
+              "request": { "method": "POST", "url": "{{localUrl}}/api/v1/user-types", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"CUSTOMER\"\n}"} }
+            },
+            {
               "name": "Criar Usuário (CUSTOMER) ✅ 201",
-              "event": [{"listen": "test", "script": {"exec": ["var json = pm.response.json();", "if (json.id) { pm.collectionVariables.set('userId', json.id); }"]}}],
+              "event": [{"listen": "test", "script": {"exec": ["pm.test('Status code is 201', function () {", "    pm.response.to.have.status(201);", "});", "pm.test('Response has id and name', function () {", "    var json = pm.response.json();", "    pm.expect(json.id).to.not.be.undefined;", "    pm.expect(json.name).to.eql('João Silva');", "    pm.collectionVariables.set('userId', json.id);", "});"]}}],
               "request": { "method": "POST", "url": "{{localUrl}}/api/v1/users", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"João Silva\",\n  \"email\": \"joao@email.com\",\n  \"login\": \"joaosilva\",\n  \"password\": \"Senha123\",\n  \"address\": \"Rua das Flores, 123\",\n  \"userTypeId\": \"{{userTypeId}}\"\n}"} }
             },
             {
               "name": "Criar Usuário - Email duplicado ❌ 422",
+              "event": [{"listen": "test", "script": {"exec": ["pm.test('Status code is 422', function () {", "    pm.response.to.have.status(422);", "});", "pm.test('Response has error details', function () {", "    var json = pm.response.json();", "    pm.expect(json.detail).to.not.be.undefined;", "});"]}}],
               "request": { "method": "POST", "url": "{{localUrl}}/api/v1/users", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Outro\",\n  \"email\": \"joao@email.com\",\n  \"login\": \"outro\",\n  \"password\": \"Senha123\",\n  \"address\": \"Rua B\",\n  \"userTypeId\": \"{{userTypeId}}\"\n}"} }
             },
             {
               "name": "Criar Usuário - Dados inválidos ❌ 400",
+              "event": [{"listen": "test", "script": {"exec": ["pm.test('Status code is 400', function () {", "    pm.response.to.have.status(400);", "});"]}}],
               "request": { "method": "POST", "url": "{{localUrl}}/api/v1/users", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"\",\n  \"email\": \"invalido\",\n  \"login\": \"\",\n  \"password\": \"123\",\n  \"address\": \"\",\n  \"userTypeId\": null\n}"} }
             },
             {
               "name": "Listar Usuários ✅ 200",
+              "event": [{"listen": "test", "script": {"exec": ["pm.test('Status code is 200', function () {", "    pm.response.to.have.status(200);", "});", "pm.test('Response is an array', function () {", "    var json = pm.response.json();", "    pm.expect(json).to.be.an('array');", "    pm.expect(json.length).to.be.greaterThan(0);", "});"]}}],
               "request": { "method": "GET", "url": "{{localUrl}}/api/v1/users" }
             },
             {
               "name": "Buscar Usuários por Nome ✅ 200",
+              "event": [{"listen": "test", "script": {"exec": ["pm.test('Status code is 200', function () {", "    pm.response.to.have.status(200);", "});", "pm.test('Response is an array', function () {", "    var json = pm.response.json();", "    pm.expect(json).to.be.an('array');", "});"]}}],
               "request": { "method": "GET", "url": "{{localUrl}}/api/v1/users?name=João" }
             },
             {
               "name": "Buscar Usuário por ID ✅ 200",
+              "event": [{"listen": "test", "script": {"exec": ["pm.test('Status code is 200', function () {", "    pm.response.to.have.status(200);", "});", "pm.test('Response has correct id', function () {", "    var json = pm.response.json();", "    pm.expect(json.id).to.eql(pm.collectionVariables.get('userId'));", "});"]}}],
               "request": { "method": "GET", "url": "{{localUrl}}/api/v1/users/{{userId}}" }
             },
             {
               "name": "Buscar Usuário - ID inexistente ❌ 404",
+              "event": [{"listen": "test", "script": {"exec": ["pm.test('Status code is 404', function () {", "    pm.response.to.have.status(404);", "});"]}}],
               "request": { "method": "GET", "url": "{{localUrl}}/api/v1/users/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee" }
             },
             {
               "name": "Atualizar Usuário ✅ 200",
+              "event": [{"listen": "test", "script": {"exec": ["pm.test('Status code is 200', function () {", "    pm.response.to.have.status(200);", "});", "pm.test('Response has updated name', function () {", "    var json = pm.response.json();", "    pm.expect(json.name).to.eql('João Atualizado');", "});"]}}],
               "request": { "method": "PUT", "url": "{{localUrl}}/api/v1/users/{{userId}}", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"João Atualizado\",\n  \"email\": \"joao@email.com\",\n  \"login\": \"joaosilva\",\n  \"address\": \"Rua Nova, 456\",\n  \"userTypeId\": \"{{userTypeId}}\"\n}"} }
             },
             {
               "name": "Deletar Usuário ✅ 204",
+              "event": [{"listen": "test", "script": {"exec": ["pm.test('Status code is 204', function () {", "    pm.response.to.have.status(204);", "});"]}}],
               "request": { "method": "DELETE", "url": "{{localUrl}}/api/v1/users/{{userId}}" }
             },
             {
               "name": "Deletar Usuário - ID inexistente ❌ 404",
+              "event": [{"listen": "test", "script": {"exec": ["pm.test('Status code is 404', function () {", "    pm.response.to.have.status(404);", "});"]}}],
               "request": { "method": "DELETE", "url": "{{localUrl}}/api/v1/users/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee" }
             }
           ]
@@ -129,23 +155,38 @@
           "name": "Autenticação",
           "item": [
             {
+              "name": "Criar Tipo para Auth ✅ 201",
+              "event": [{"listen": "test", "script": {"exec": ["pm.test('Status code is 201', function () {", "    pm.response.to.have.status(201);", "});", "pm.test('Save userTypeId', function () {", "    var json = pm.response.json();", "    pm.collectionVariables.set('userTypeId', json.id);", "});"]}}],
+              "request": { "method": "POST", "url": "{{localUrl}}/api/v1/user-types", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"AUTH_TYPE\"\n}"} }
+            },
+            {
+              "name": "Criar Usuário para Auth ✅ 201",
+              "event": [{"listen": "test", "script": {"exec": ["pm.test('Status code is 201', function () {", "    pm.response.to.have.status(201);", "});", "pm.test('Save userId', function () {", "    var json = pm.response.json();", "    pm.collectionVariables.set('userId', json.id);", "});"]}}],
+              "request": { "method": "POST", "url": "{{localUrl}}/api/v1/users", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Auth User\",\n  \"email\": \"auth@email.com\",\n  \"login\": \"authuser\",\n  \"password\": \"Senha123\",\n  \"address\": \"Rua Auth, 1\",\n  \"userTypeId\": \"{{userTypeId}}\"\n}"} }
+            },
+            {
               "name": "Login ✅ 200",
-              "request": { "method": "POST", "url": "{{localUrl}}/api/v1/users/login", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"login\": \"joaosilva\",\n  \"password\": \"Senha123\"\n}"} }
+              "event": [{"listen": "test", "script": {"exec": ["pm.test('Status code is 200', function () {", "    pm.response.to.have.status(200);", "});", "pm.test('Response has user data', function () {", "    var json = pm.response.json();", "    pm.expect(json.id).to.not.be.undefined;", "    pm.expect(json.login).to.eql('authuser');", "});"]}}],
+              "request": { "method": "POST", "url": "{{localUrl}}/api/v1/users/login", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"login\": \"authuser\",\n  \"password\": \"Senha123\"\n}"} }
             },
             {
               "name": "Login - Credenciais inválidas ❌ 422",
-              "request": { "method": "POST", "url": "{{localUrl}}/api/v1/users/login", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"login\": \"joaosilva\",\n  \"password\": \"SenhaErrada\"\n}"} }
+              "event": [{"listen": "test", "script": {"exec": ["pm.test('Status code is 422', function () {", "    pm.response.to.have.status(422);", "});", "pm.test('Response has error details', function () {", "    var json = pm.response.json();", "    pm.expect(json.detail).to.not.be.undefined;", "});"]}}],
+              "request": { "method": "POST", "url": "{{localUrl}}/api/v1/users/login", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"login\": \"authuser\",\n  \"password\": \"SenhaErrada\"\n}"} }
             },
             {
               "name": "Trocar Senha ✅ 200",
+              "event": [{"listen": "test", "script": {"exec": ["pm.test('Status code is 200', function () {", "    pm.response.to.have.status(200);", "});"]}}],
               "request": { "method": "PATCH", "url": "{{localUrl}}/api/v1/users/{{userId}}/password", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"currentPassword\": \"Senha123\",\n  \"newPassword\": \"NovaSenha456\"\n}"} }
             },
             {
               "name": "Trocar Senha - Atual incorreta ❌ 400",
+              "event": [{"listen": "test", "script": {"exec": ["pm.test('Status code is 400', function () {", "    pm.response.to.have.status(400);", "});"]}}],
               "request": { "method": "PATCH", "url": "{{localUrl}}/api/v1/users/{{userId}}/password", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"currentPassword\": \"SenhaErrada\",\n  \"newPassword\": \"NovaSenha456\"\n}"} }
             },
             {
               "name": "Trocar Senha - ID inexistente ❌ 404",
+              "event": [{"listen": "test", "script": {"exec": ["pm.test('Status code is 404', function () {", "    pm.response.to.have.status(404);", "});"]}}],
               "request": { "method": "PATCH", "url": "{{localUrl}}/api/v1/users/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee/password", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"currentPassword\": \"Senha123\",\n  \"newPassword\": \"NovaSenha456\"\n}"} }
             }
           ]
@@ -204,40 +245,63 @@
           "name": "Cardápio (MenuItem)",
           "item": [
             {
+              "name": "Criar Tipo para MenuItem ✅ 201",
+              "event": [{"listen": "test", "script": {"exec": ["pm.test('Status code is 201', function () {", "    pm.response.to.have.status(201);", "});", "pm.test('Save userTypeId', function () {", "    var json = pm.response.json();", "    pm.collectionVariables.set('userTypeId', json.id);", "});"]}}],
+              "request": { "method": "POST", "url": "{{localUrl}}/api/v1/user-types", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"OWNER_MENU\"\n}"} }
+            },
+            {
+              "name": "Criar Usuário Owner ✅ 201",
+              "event": [{"listen": "test", "script": {"exec": ["pm.test('Status code is 201', function () {", "    pm.response.to.have.status(201);", "});", "pm.test('Save userId', function () {", "    var json = pm.response.json();", "    pm.collectionVariables.set('userId', json.id);", "});"]}}],
+              "request": { "method": "POST", "url": "{{localUrl}}/api/v1/users", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Owner Menu\",\n  \"email\": \"ownermenu@email.com\",\n  \"login\": \"ownermenu\",\n  \"password\": \"Senha123\",\n  \"address\": \"Rua Owner, 1\",\n  \"userTypeId\": \"{{userTypeId}}\"\n}"} }
+            },
+            {
+              "name": "Criar Restaurante para MenuItem ✅ 201",
+              "event": [{"listen": "test", "script": {"exec": ["pm.test('Status code is 201', function () {", "    pm.response.to.have.status(201);", "});", "pm.test('Save restaurantId', function () {", "    var json = pm.response.json();", "    pm.expect(json.id).to.not.be.undefined;", "    pm.collectionVariables.set('restaurantId', json.id);", "});"]}}],
+              "request": { "method": "POST", "url": "{{localUrl}}/api/v1/restaurants", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Restaurante Teste Menu\",\n  \"cuisineType\": \"ITALIANA\",\n  \"openingHours\": \"2026-01-01T08:00:00\",\n  \"closingTime\": \"2026-01-01T22:00:00\",\n  \"ownerId\": \"{{userId}}\"\n}"} }
+            },
+            {
               "name": "Criar Item ✅ 201",
-              "event": [{"listen": "test", "script": {"exec": ["var json = pm.response.json();", "if (json.id) { pm.collectionVariables.set('menuItemId', json.id); }"]}}],
+              "event": [{"listen": "test", "script": {"exec": ["pm.test('Status code is 201', function () {", "    pm.response.to.have.status(201);", "});", "pm.test('Response has id and name', function () {", "    var json = pm.response.json();", "    pm.expect(json.id).to.not.be.undefined;", "    pm.expect(json.name).to.eql('Pizza Margherita');", "    pm.collectionVariables.set('menuItemId', json.id);", "});"]}}],
               "request": { "method": "POST", "url": "{{localUrl}}/api/v1/restaurants/{{restaurantId}}/menu-items", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Pizza Margherita\",\n  \"description\": \"Molho, mussarela e manjericão\",\n  \"price\": 39.90,\n  \"dineInOnly\": false,\n  \"photoPath\": \"/img/pizza.jpg\"\n}"} }
             },
             {
               "name": "Criar Item - Restaurante inexistente ❌ 404",
+              "event": [{"listen": "test", "script": {"exec": ["pm.test('Status code is 404', function () {", "    pm.response.to.have.status(404);", "});"]}}],
               "request": { "method": "POST", "url": "{{localUrl}}/api/v1/restaurants/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee/menu-items", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Pizza\",\n  \"description\": \"desc\",\n  \"price\": 10.00,\n  \"dineInOnly\": false\n}"} }
             },
             {
               "name": "Criar Item - Preço zero ❌ 400",
+              "event": [{"listen": "test", "script": {"exec": ["pm.test('Status code is 400', function () {", "    pm.response.to.have.status(400);", "});"]}}],
               "request": { "method": "POST", "url": "{{localUrl}}/api/v1/restaurants/{{restaurantId}}/menu-items", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Item\",\n  \"price\": 0,\n  \"dineInOnly\": false\n}"} }
             },
             {
               "name": "Listar Itens do Restaurante ✅ 200",
+              "event": [{"listen": "test", "script": {"exec": ["pm.test('Status code is 200', function () {", "    pm.response.to.have.status(200);", "});", "pm.test('Response is an array', function () {", "    var json = pm.response.json();", "    pm.expect(json).to.be.an('array');", "    pm.expect(json.length).to.be.greaterThan(0);", "});"]}}],
               "request": { "method": "GET", "url": "{{localUrl}}/api/v1/restaurants/{{restaurantId}}/menu-items" }
             },
             {
               "name": "Buscar Item por ID ✅ 200",
+              "event": [{"listen": "test", "script": {"exec": ["pm.test('Status code is 200', function () {", "    pm.response.to.have.status(200);", "});", "pm.test('Response has correct id', function () {", "    var json = pm.response.json();", "    pm.expect(json.id).to.eql(pm.collectionVariables.get('menuItemId'));", "});"]}}],
               "request": { "method": "GET", "url": "{{localUrl}}/api/v1/menu-items/{{menuItemId}}" }
             },
             {
               "name": "Buscar Item - ID inexistente ❌ 404",
+              "event": [{"listen": "test", "script": {"exec": ["pm.test('Status code is 404', function () {", "    pm.response.to.have.status(404);", "});"]}}],
               "request": { "method": "GET", "url": "{{localUrl}}/api/v1/menu-items/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee" }
             },
             {
               "name": "Atualizar Item ✅ 200",
+              "event": [{"listen": "test", "script": {"exec": ["pm.test('Status code is 200', function () {", "    pm.response.to.have.status(200);", "});", "pm.test('Response has updated name', function () {", "    var json = pm.response.json();", "    pm.expect(json.name).to.eql('Pizza Calabresa');", "});"]}}],
               "request": { "method": "PUT", "url": "{{localUrl}}/api/v1/menu-items/{{menuItemId}}", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Pizza Calabresa\",\n  \"description\": \"Calabresa e cebola\",\n  \"price\": 42.90,\n  \"dineInOnly\": true,\n  \"photoPath\": \"/img/calabresa.jpg\"\n}"} }
             },
             {
               "name": "Deletar Item ✅ 204",
+              "event": [{"listen": "test", "script": {"exec": ["pm.test('Status code is 204', function () {", "    pm.response.to.have.status(204);", "});"]}}],
               "request": { "method": "DELETE", "url": "{{localUrl}}/api/v1/menu-items/{{menuItemId}}" }
             },
             {
               "name": "Deletar Item - ID inexistente ❌ 404",
+              "event": [{"listen": "test", "script": {"exec": ["pm.test('Status code is 404', function () {", "    pm.response.to.have.status(404);", "});"]}}],
               "request": { "method": "DELETE", "url": "{{localUrl}}/api/v1/menu-items/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee" }
             }
           ]
@@ -251,7 +315,8 @@
           "name": "Health Check",
           "item": [
             {
-              "name": "Health",
+              "name": "Health ✅ 200",
+              "event": [{"listen": "test", "script": {"exec": ["pm.test('Status code is 200', function () {", "    pm.response.to.have.status(200);", "});", "pm.test('Response has status UP', function () {", "    var json = pm.response.json();", "    pm.expect(json.status).to.eql('UP');", "});"]}}],
               "request": { "method": "GET", "url": "{{prodUrl}}/actuator/health" }
             }
           ]
@@ -261,11 +326,12 @@
           "item": [
             {
               "name": "Criar Tipo - CUSTOMER ✅ 201",
-              "event": [{"listen": "test", "script": {"exec": ["var json = pm.response.json();", "if (json.id) { pm.collectionVariables.set('userTypeId', json.id); }"]}}],
+              "event": [{"listen": "test", "script": {"exec": ["pm.test('Status code is 201', function () {", "    pm.response.to.have.status(201);", "});", "pm.test('Response has id', function () {", "    var json = pm.response.json();", "    pm.expect(json.id).to.not.be.undefined;", "    pm.collectionVariables.set('userTypeId', json.id);", "});"]}}],
               "request": { "method": "POST", "url": "{{prodUrl}}/api/v1/user-types", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"CUSTOMER\"\n}"} }
             },
             {
               "name": "Listar Tipos ✅ 200",
+              "event": [{"listen": "test", "script": {"exec": ["pm.test('Status code is 200', function () {", "    pm.response.to.have.status(200);", "});", "pm.test('Response is an array', function () {", "    var json = pm.response.json();", "    pm.expect(json).to.be.an('array');", "});"]}}],
               "request": { "method": "GET", "url": "{{prodUrl}}/api/v1/user-types" }
             }
           ]
@@ -275,11 +341,12 @@
           "item": [
             {
               "name": "Criar Usuário ✅ 201",
-              "event": [{"listen": "test", "script": {"exec": ["var json = pm.response.json();", "if (json.id) { pm.collectionVariables.set('userId', json.id); }"]}}],
+              "event": [{"listen": "test", "script": {"exec": ["pm.test('Status code is 201', function () {", "    pm.response.to.have.status(201);", "});", "pm.test('Response has id', function () {", "    var json = pm.response.json();", "    pm.expect(json.id).to.not.be.undefined;", "    pm.collectionVariables.set('userId', json.id);", "});"]}}],
               "request": { "method": "POST", "url": "{{prodUrl}}/api/v1/users", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"João Silva\",\n  \"email\": \"joao@email.com\",\n  \"login\": \"joaosilva\",\n  \"password\": \"Senha123\",\n  \"address\": \"Rua das Flores, 123\",\n  \"userTypeId\": \"{{userTypeId}}\"\n}"} }
             },
             {
               "name": "Listar Usuários ✅ 200",
+              "event": [{"listen": "test", "script": {"exec": ["pm.test('Status code is 200', function () {", "    pm.response.to.have.status(200);", "});", "pm.test('Response is an array', function () {", "    var json = pm.response.json();", "    pm.expect(json).to.be.an('array');", "});"]}}],
               "request": { "method": "GET", "url": "{{prodUrl}}/api/v1/users" }
             }
            ]

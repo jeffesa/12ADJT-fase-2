@@ -118,6 +118,236 @@ run_tests() {
   mvn clean verify
 }
 
+run_collection() {
+  echo ""
+  echo "📬 Executando Collection (Newman + HTML report)..."
+  echo ""
+  if ! command -v newman &>/dev/null; then
+    echo "❌ Newman não instalado. Instale com: npm install -g newman newman-reporter-htmlextra"
+    echo "   Ou use a opção 9 (script shell puro, sem dependências)."
+    return 1
+  fi
+  newman run "docs/api-collection/FIAP Fase 2 - Gestao de Restaurantes.postman_collection.json" \
+    --folder local \
+    -r htmlextra \
+    --reporter-htmlextra-export docs/api-collection/evidencia-testes-api.html
+  echo ""
+  echo "📊 Relatório gerado em: docs/api-collection/evidencia-testes-api.html"
+  echo "   Abra no navegador: open docs/api-collection/evidencia-testes-api.html"
+}
+
+run_collection_shell() {
+  local API_URL="${1:-http://localhost:8080}"
+  echo ""
+  echo -e "\033[0;36m╔══════════════════════════════════════════════════════════╗\033[0m"
+  echo -e "\033[0;36m║   📋 Testes da API - Gestão de Restaurantes (Fase 2)    ║\033[0m"
+  echo -e "\033[0;36m║   URL: $API_URL\033[0m"
+  echo -e "\033[0;36m╚══════════════════════════════════════════════════════════╝\033[0m"
+  echo ""
+
+  if ! command -v jq &>/dev/null; then
+    echo "❌ jq não encontrado. Instale com: brew install jq (mac) ou apt install jq (linux)"
+    return 1
+  fi
+
+  local PASSED=0 FAILED=0 TOTAL=0
+  local FAIL_LIST=""
+  local USER_TYPE_ID="" USER_TYPE_ID_2="" USER_ID="" RESTAURANT_ID="" MENU_ITEM_ID=""
+
+  _assert() {
+    local NAME="$1" EXPECTED="$2" ACTUAL="$3" RESP="$4"
+    TOTAL=$((TOTAL + 1))
+    if [ "$ACTUAL" -eq "$EXPECTED" ]; then
+      PASSED=$((PASSED + 1))
+      echo -e "  \033[0;32m✅ $NAME\033[0m (esperado: $EXPECTED, recebido: $ACTUAL)"
+    else
+      FAILED=$((FAILED + 1))
+      FAIL_LIST="$FAIL_LIST\n  ❌ $NAME (esperado: $EXPECTED, recebido: $ACTUAL)"
+      echo -e "  \033[0;31m❌ $NAME\033[0m (esperado: $EXPECTED, recebido: $ACTUAL)"
+      [ -n "$RESP" ] && echo -e "     \033[1;33mBody: $(echo "$RESP" | head -c 200)\033[0m"
+    fi
+  }
+
+  _get() { RESPONSE=$(curl -s -w "\n%{http_code}" "$1"); HTTP_CODE=$(echo "$RESPONSE" | tail -1); BODY=$(echo "$RESPONSE" | sed '$d'); }
+  _post() { RESPONSE=$(curl -s -w "\n%{http_code}" -X POST "$1" -H "Content-Type: application/json" -d "$2"); HTTP_CODE=$(echo "$RESPONSE" | tail -1); BODY=$(echo "$RESPONSE" | sed '$d'); }
+  _put() { RESPONSE=$(curl -s -w "\n%{http_code}" -X PUT "$1" -H "Content-Type: application/json" -d "$2"); HTTP_CODE=$(echo "$RESPONSE" | tail -1); BODY=$(echo "$RESPONSE" | sed '$d'); }
+  _patch() { RESPONSE=$(curl -s -w "\n%{http_code}" -X PATCH "$1" -H "Content-Type: application/json" -d "$2"); HTTP_CODE=$(echo "$RESPONSE" | tail -1); BODY=$(echo "$RESPONSE" | sed '$d'); }
+  _del() { RESPONSE=$(curl -s -w "\n%{http_code}" -X DELETE "$1"); HTTP_CODE=$(echo "$RESPONSE" | tail -1); BODY=$(echo "$RESPONSE" | sed '$d'); }
+
+  # --- Health Check ---
+  echo -e "\033[0;36m── Health Check ──\033[0m"
+  _get "$API_URL/actuator/health"
+  _assert "Health" 200 "$HTTP_CODE" "$BODY"
+  echo ""
+
+  # --- Tipos de Usuário ---
+  echo -e "\033[0;36m── Tipos de Usuário ──\033[0m"
+  _post "$API_URL/api/v1/user-types" '{"name": "CUSTOMER"}'
+  _assert "Criar Tipo - CUSTOMER" 201 "$HTTP_CODE" "$BODY"
+  USER_TYPE_ID=$(echo "$BODY" | jq -r '.id // empty')
+
+  _post "$API_URL/api/v1/user-types" '{"name": "RESTAURANT_OWNER"}'
+  _assert "Criar Tipo - RESTAURANT_OWNER" 201 "$HTTP_CODE" "$BODY"
+  USER_TYPE_ID_2=$(echo "$BODY" | jq -r '.id // empty')
+
+  _post "$API_URL/api/v1/user-types" '{"name": "CUSTOMER"}'
+  _assert "Criar Tipo - Nome duplicado" 422 "$HTTP_CODE" "$BODY"
+
+  _post "$API_URL/api/v1/user-types" '{"name": ""}'
+  _assert "Criar Tipo - Nome vazio" 400 "$HTTP_CODE" "$BODY"
+
+  _get "$API_URL/api/v1/user-types"
+  _assert "Listar Tipos" 200 "$HTTP_CODE" "$BODY"
+
+  _get "$API_URL/api/v1/user-types/$USER_TYPE_ID"
+  _assert "Buscar Tipo por ID" 200 "$HTTP_CODE" "$BODY"
+
+  _get "$API_URL/api/v1/user-types/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
+  _assert "Buscar Tipo - ID inexistente" 404 "$HTTP_CODE" "$BODY"
+
+  _put "$API_URL/api/v1/user-types/$USER_TYPE_ID" '{"name": "ADMIN"}'
+  _assert "Atualizar Tipo" 200 "$HTTP_CODE" "$BODY"
+
+  _put "$API_URL/api/v1/user-types/$USER_TYPE_ID" '{"name": "RESTAURANT_OWNER"}'
+  _assert "Atualizar Tipo - Nome duplicado" 422 "$HTTP_CODE" "$BODY"
+
+  _put "$API_URL/api/v1/user-types/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee" '{"name": "NOVO"}'
+  _assert "Atualizar Tipo - ID inexistente" 404 "$HTTP_CODE" "$BODY"
+
+  _del "$API_URL/api/v1/user-types/$USER_TYPE_ID"
+  _assert "Deletar Tipo" 204 "$HTTP_CODE" "$BODY"
+
+  _del "$API_URL/api/v1/user-types/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
+  _assert "Deletar Tipo - ID inexistente" 404 "$HTTP_CODE" "$BODY"
+  echo ""
+
+  # --- Usuários ---
+  echo -e "\033[0;36m── Usuários ──\033[0m"
+  _post "$API_URL/api/v1/user-types" '{"name": "USER_TEST"}'
+  USER_TYPE_ID=$(echo "$BODY" | jq -r '.id // empty')
+
+  _post "$API_URL/api/v1/users" "{\"name\": \"João Silva\", \"email\": \"joao@email.com\", \"login\": \"joaosilva\", \"password\": \"Senha123\", \"address\": \"Rua das Flores, 123\", \"userTypeId\": \"$USER_TYPE_ID\"}"
+  _assert "Criar Usuário (CUSTOMER)" 201 "$HTTP_CODE" "$BODY"
+  USER_ID=$(echo "$BODY" | jq -r '.id // empty')
+
+  _post "$API_URL/api/v1/users" "{\"name\": \"Outro\", \"email\": \"joao@email.com\", \"login\": \"outro\", \"password\": \"Senha123\", \"address\": \"Rua B\", \"userTypeId\": \"$USER_TYPE_ID\"}"
+  _assert "Criar Usuário - Email duplicado" 422 "$HTTP_CODE" "$BODY"
+
+  _post "$API_URL/api/v1/users" '{"name": "", "email": "invalido", "login": "", "password": "123", "address": "", "userTypeId": null}'
+  _assert "Criar Usuário - Dados inválidos" 400 "$HTTP_CODE" "$BODY"
+
+  _get "$API_URL/api/v1/users"
+  _assert "Listar Usuários" 200 "$HTTP_CODE" "$BODY"
+
+  _get "$API_URL/api/v1/users?name=Jo%C3%A3o"
+  _assert "Buscar Usuários por Nome" 200 "$HTTP_CODE" "$BODY"
+
+  _get "$API_URL/api/v1/users/$USER_ID"
+  _assert "Buscar Usuário por ID" 200 "$HTTP_CODE" "$BODY"
+
+  _get "$API_URL/api/v1/users/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
+  _assert "Buscar Usuário - ID inexistente" 404 "$HTTP_CODE" "$BODY"
+
+  _put "$API_URL/api/v1/users/$USER_ID" "{\"name\": \"João Atualizado\", \"email\": \"joao@email.com\", \"login\": \"joaosilva\", \"address\": \"Rua Nova, 456\", \"userTypeId\": \"$USER_TYPE_ID\"}"
+  _assert "Atualizar Usuário" 200 "$HTTP_CODE" "$BODY"
+
+  _del "$API_URL/api/v1/users/$USER_ID"
+  _assert "Deletar Usuário" 204 "$HTTP_CODE" "$BODY"
+
+  _del "$API_URL/api/v1/users/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
+  _assert "Deletar Usuário - ID inexistente" 404 "$HTTP_CODE" "$BODY"
+  echo ""
+
+  # --- Autenticação ---
+  echo -e "\033[0;36m── Autenticação ──\033[0m"
+  _post "$API_URL/api/v1/user-types" '{"name": "AUTH_TYPE"}'
+  USER_TYPE_ID=$(echo "$BODY" | jq -r '.id // empty')
+
+  _post "$API_URL/api/v1/users" "{\"name\": \"Auth User\", \"email\": \"auth@email.com\", \"login\": \"authuser\", \"password\": \"Senha123\", \"address\": \"Rua Auth, 1\", \"userTypeId\": \"$USER_TYPE_ID\"}"
+  USER_ID=$(echo "$BODY" | jq -r '.id // empty')
+
+  _post "$API_URL/api/v1/users/login" '{"login": "authuser", "password": "Senha123"}'
+  _assert "Login" 200 "$HTTP_CODE" "$BODY"
+
+  _post "$API_URL/api/v1/users/login" '{"login": "authuser", "password": "SenhaErrada"}'
+  _assert "Login - Credenciais inválidas" 422 "$HTTP_CODE" "$BODY"
+
+  _patch "$API_URL/api/v1/users/$USER_ID/password" '{"currentPassword": "Senha123", "newPassword": "NovaSenha456"}'
+  _assert "Trocar Senha" 200 "$HTTP_CODE" "$BODY"
+
+  _patch "$API_URL/api/v1/users/$USER_ID/password" '{"currentPassword": "SenhaErrada", "newPassword": "NovaSenha456"}'
+  _assert "Trocar Senha - Atual incorreta" 400 "$HTTP_CODE" "$BODY"
+
+  _patch "$API_URL/api/v1/users/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee/password" '{"currentPassword": "Senha123", "newPassword": "NovaSenha456"}'
+  _assert "Trocar Senha - ID inexistente" 404 "$HTTP_CODE" "$BODY"
+  echo ""
+
+  # --- Cardápio (MenuItem) ---
+  echo -e "\033[0;36m── Cardápio (MenuItem) ──\033[0m"
+  _post "$API_URL/api/v1/user-types" '{"name": "OWNER_MENU"}'
+  USER_TYPE_ID=$(echo "$BODY" | jq -r '.id // empty')
+
+  _post "$API_URL/api/v1/users" "{\"name\": \"Owner Menu\", \"email\": \"ownermenu@email.com\", \"login\": \"ownermenu\", \"password\": \"Senha123\", \"address\": \"Rua Owner, 1\", \"userTypeId\": \"$USER_TYPE_ID\"}"
+  USER_ID=$(echo "$BODY" | jq -r '.id // empty')
+
+  _post "$API_URL/api/v1/restaurants" "{\"name\": \"Restaurante Teste\", \"cuisineType\": \"ITALIANA\", \"openingHours\": \"2026-01-01T08:00:00\", \"closingTime\": \"2026-01-01T22:00:00\", \"ownerId\": \"$USER_ID\"}"
+  RESTAURANT_ID=$(echo "$BODY" | jq -r '.id // empty')
+
+  if [ -z "$RESTAURANT_ID" ] || [ "$RESTAURANT_ID" = "null" ]; then
+    echo -e "  \033[1;33m⚠️  Endpoint POST /api/v1/restaurants não disponível (TASK-020 pendente)\033[0m"
+    echo -e "  \033[1;33m   Testes de MenuItem ignorados.\033[0m"
+  else
+    _post "$API_URL/api/v1/restaurants/$RESTAURANT_ID/menu-items" '{"name": "Pizza Margherita", "description": "Molho, mussarela e manjericão", "price": 39.90, "dineInOnly": false, "photoPath": "/img/pizza.jpg"}'
+    _assert "Criar Item" 201 "$HTTP_CODE" "$BODY"
+    MENU_ITEM_ID=$(echo "$BODY" | jq -r '.id // empty')
+
+    _post "$API_URL/api/v1/restaurants/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee/menu-items" '{"name": "Pizza", "description": "desc", "price": 10.00, "dineInOnly": false}'
+    _assert "Criar Item - Restaurante inexistente" 404 "$HTTP_CODE" "$BODY"
+
+    _post "$API_URL/api/v1/restaurants/$RESTAURANT_ID/menu-items" '{"name": "Item", "price": 0, "dineInOnly": false}'
+    _assert "Criar Item - Preço zero" 400 "$HTTP_CODE" "$BODY"
+
+    _get "$API_URL/api/v1/restaurants/$RESTAURANT_ID/menu-items"
+    _assert "Listar Itens do Restaurante" 200 "$HTTP_CODE" "$BODY"
+
+    _get "$API_URL/api/v1/menu-items/$MENU_ITEM_ID"
+    _assert "Buscar Item por ID" 200 "$HTTP_CODE" "$BODY"
+
+    _get "$API_URL/api/v1/menu-items/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
+    _assert "Buscar Item - ID inexistente" 404 "$HTTP_CODE" "$BODY"
+
+    _put "$API_URL/api/v1/menu-items/$MENU_ITEM_ID" '{"name": "Pizza Calabresa", "description": "Calabresa e cebola", "price": 42.90, "dineInOnly": true, "photoPath": "/img/calabresa.jpg"}'
+    _assert "Atualizar Item" 200 "$HTTP_CODE" "$BODY"
+
+    _del "$API_URL/api/v1/menu-items/$MENU_ITEM_ID"
+    _assert "Deletar Item" 204 "$HTTP_CODE" "$BODY"
+
+    _del "$API_URL/api/v1/menu-items/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
+    _assert "Deletar Item - ID inexistente" 404 "$HTTP_CODE" "$BODY"
+  fi
+  echo ""
+
+  # --- Resumo ---
+  echo -e "\033[0;36m══════════════════════════════════════════════════════════\033[0m"
+  echo -e "\033[0;36m                    📊 RESUMO\033[0m"
+  echo -e "\033[0;36m══════════════════════════════════════════════════════════\033[0m"
+  echo ""
+  echo -e "  Total de testes:  $TOTAL"
+  echo -e "  \033[0;32mPassou:           $PASSED\033[0m"
+  echo -e "  \033[0;31mFalhou:           $FAILED\033[0m"
+  echo ""
+  if [ "$FAILED" -eq 0 ]; then
+    echo -e "  \033[0;32m🎉 Todos os testes passaram!\033[0m"
+  else
+    echo -e "  \033[0;31m⚠️  Testes que falharam:\033[0m"
+    echo -e "$FAIL_LIST"
+  fi
+  echo ""
+
+  [ "$FAILED" -gt 0 ] && return 1
+  return 0
+}
+
 show_menu() {
   echo ""
   echo "╔══════════════════════════════════════════╗"
@@ -129,7 +359,9 @@ show_menu() {
   echo "║  4) Docker Compose (build + up)         ║"
   echo "║  5) Docker Compose (stop)               ║"
   echo "║  6) Rodar testes (mvn clean verify)     ║"
-  echo "║  7) Kill porta 8080                     ║"
+  echo "║  7) Rodar collection (Newman + HTML)    ║"
+  echo "║  8) Rodar testes API (curl + jq)        ║"
+  echo "║  9) Kill porta 8080                     ║"
   echo "║  0) Sair                                ║"
   echo "╚══════════════════════════════════════════╝"
   echo ""
@@ -142,7 +374,9 @@ show_menu() {
     4) run_docker ;;
     5) stop_docker ;;
     6) run_tests ;;
-    7) kill_port 8080 ;;
+    7) run_collection ;;
+    8) run_collection_shell ;;
+    9) kill_port 8080 ;;
     0) echo "👋 Até mais!" && exit 0 ;;
     *) echo "❌ Opção inválida." && show_menu ;;
   esac
@@ -155,8 +389,10 @@ if [ -n "$1" ]; then
     docker) run_docker ;;
     stop) stop_docker ;;
     tests) run_tests ;;
+    collection) run_collection ;;
+    test-api) run_collection_shell ;;
     kill) kill_port 8080 ;;
-    *) echo "Uso: ./run.sh [dev|test|prod|docker|stop|tests|kill]" ;;
+    *) echo "Uso: ./run.sh [dev|test|prod|docker|stop|tests|collection|test-api|kill]" ;;
   esac
 else
   show_menu
