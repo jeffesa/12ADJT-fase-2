@@ -195,48 +195,68 @@
           "name": "Restaurantes",
           "item": [
             {
-              "name": "Criar Restaurante ✅ 201",
-              "event": [{"listen": "test", "script": {"exec": ["var json = pm.response.json();", "if (json.id) { pm.collectionVariables.set('restaurantId', json.id); }"]}}],
-              "request": { "method": "POST", "url": "{{localUrl}}/api/v1/restaurants", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Pizzaria do João\",\n  \"address\": \"Rua das Flores, 123\",\n  \"cuisineType\": \"Italiana\",\n  \"openingHours\": \"11:00\",\n  \"closingTime\": \"23:00\",\n  \"ownerId\": \"{{userId}}\"\n}"} }
+              "name": "Criar Tipo RESTAURANT_OWNER ✅ 201",
+              "event": [{"listen": "test", "script": {"exec": ["pm.test('Status code is 201', function () {", "    pm.response.to.have.status(201);", "});", "pm.test('Save userTypeId', function () {", "    var json = pm.response.json();", "    pm.collectionVariables.set('userTypeId', json.id);", "});"]}}],
+              "request": { "method": "POST", "url": "{{localUrl}}/api/v1/user-types", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"REST_OWNER\"\n}"} }
             },
             {
-              "name": "Criar Restaurante - Dados inválidos ❌ 400",
-              "request": { "method": "POST", "url": "{{localUrl}}/api/v1/restaurants", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"\",\n  \"address\": \"\",\n  \"cuisineType\": \"\",\n  \"openingHours\": \"25:00\",\n  \"closingTime\": \"26:00\",\n  \"ownerId\": null\n}"} }
+              "name": "Criar Owner para Restaurante ✅ 201",
+              "event": [{"listen": "test", "script": {"exec": ["pm.test('Status code is 201', function () {", "    pm.response.to.have.status(201);", "});", "pm.test('Save userId', function () {", "    var json = pm.response.json();", "    pm.collectionVariables.set('userId', json.id);", "});"]}}],
+              "request": { "method": "POST", "url": "{{localUrl}}/api/v1/users", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Owner Rest\",\n  \"email\": \"ownerrest@email.com\",\n  \"login\": \"ownerrest\",\n  \"password\": \"Senha123\",\n  \"address\": \"Rua Owner, 1\",\n  \"userTypeId\": \"{{userTypeId}}\"\n}"} }
+            },
+            {
+              "name": "Criar Restaurante ✅ 201",
+              "event": [{"listen": "test", "script": {"exec": ["pm.test('Status code is 201', function () {", "    pm.response.to.have.status(201);", "});", "pm.test('Response has id and name', function () {", "    var json = pm.response.json();", "    pm.expect(json.id).to.not.be.undefined;", "    pm.expect(json.name).to.eql('Pizzaria do João');", "    pm.collectionVariables.set('restaurantId', json.id);", "});"]}}],
+              "request": { "method": "POST", "url": "{{localUrl}}/api/v1/restaurants", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Pizzaria do João\",\n  \"address\": \"Rua das Flores, 123\",\n  \"cuisineType\": \"ITALIANA\",\n  \"openingHours\": \"2024-01-01T11:00:00\",\n  \"closingTime\": \"2024-01-01T23:00:00\",\n  \"ownerId\": \"{{userId}}\"\n}"} }
+            },
+            {
+              "name": "Criar Restaurante - Owner não é RESTAURANT_OWNER ❌ 422",
+              "event": [{"listen": "test", "script": {"exec": ["pm.test('Status code is 422', function () {", "    pm.response.to.have.status(422);", "});", "pm.test('Response has error details', function () {", "    var json = pm.response.json();", "    pm.expect(json.detail).to.not.be.undefined;", "});"]}}],
+              "request": { "method": "POST", "url": "{{localUrl}}/api/v1/restaurants", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Restaurante Inválido\",\n  \"address\": \"Rua X\",\n  \"cuisineType\": \"BRASILEIRA\",\n  \"openingHours\": \"2024-01-01T08:00:00\",\n  \"closingTime\": \"2024-01-01T22:00:00\",\n  \"ownerId\": \"aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee\"\n}"} }
+            },
+            {
+              "name": "Criar Restaurante - Nome vazio ❌ 400",
+              "event": [{"listen": "test", "script": {"exec": ["pm.test('Status code is 400', function () {", "    pm.response.to.have.status(400);", "});"]}}],
+              "request": { "method": "POST", "url": "{{localUrl}}/api/v1/restaurants", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"\",\n  \"address\": \"Rua Z\",\n  \"cuisineType\": \"MEXICANA\",\n  \"openingHours\": \"2024-01-01T09:00:00\",\n  \"closingTime\": \"2024-01-01T21:00:00\",\n  \"ownerId\": \"{{userId}}\"\n}"} }
             },
             {
               "name": "Listar Restaurantes ✅ 200",
+              "event": [{"listen": "test", "script": {"exec": ["pm.test('Status code is 200', function () {", "    pm.response.to.have.status(200);", "});", "pm.test('Response is an array', function () {", "    var json = pm.response.json();", "    pm.expect(json).to.be.an('array');", "    pm.expect(json.length).to.be.greaterThan(0);", "});"]}}],
               "request": { "method": "GET", "url": "{{localUrl}}/api/v1/restaurants" }
             },
             {
               "name": "Buscar Restaurante por ID ✅ 200",
+              "event": [{"listen": "test", "script": {"exec": ["pm.test('Status code is 200', function () {", "    pm.response.to.have.status(200);", "});", "pm.test('Response has correct id', function () {", "    var json = pm.response.json();", "    pm.expect(json.id).to.eql(pm.collectionVariables.get('restaurantId'));", "});"]}}],
               "request": { "method": "GET", "url": "{{localUrl}}/api/v1/restaurants/{{restaurantId}}" }
             },
             {
               "name": "Buscar Restaurante - ID inexistente ❌ 404",
+              "event": [{"listen": "test", "script": {"exec": ["pm.test('Status code is 404', function () {", "    pm.response.to.have.status(404);", "});"]}}],
               "request": { "method": "GET", "url": "{{localUrl}}/api/v1/restaurants/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee" }
             },
             {
-              "name": "Buscar Restaurante por Owner ✅ 200",
+              "name": "Buscar Restaurantes por Owner ✅ 200",
+              "event": [{"listen": "test", "script": {"exec": ["pm.test('Status code is 200', function () {", "    pm.response.to.have.status(200);", "});", "pm.test('Response is an array', function () {", "    var json = pm.response.json();", "    pm.expect(json).to.be.an('array');", "    pm.expect(json.length).to.be.greaterThan(0);", "});"]}}],
               "request": { "method": "GET", "url": "{{localUrl}}/api/v1/restaurants/owner/{{userId}}" }
             },
             {
-              "name": "Buscar Restaurante - Owner inexistente ❌ 404",
-              "request": { "method": "GET", "url": "{{localUrl}}/api/v1/restaurants/owner/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee" }
-            },
-            {
               "name": "Atualizar Restaurante ✅ 200",
-              "request": { "method": "PUT", "url": "{{localUrl}}/api/v1/restaurants/{{restaurantId}}", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Pizzaria do João - Atualizado\",\n  \"address\": \"Rua Nova, 456\",\n  \"cuisineType\": \"Italiana\",\n  \"openingHours\": \"12:00\",\n  \"closingTime\": \"00:00\"\n}"} }
+              "event": [{"listen": "test", "script": {"exec": ["pm.test('Status code is 200', function () {", "    pm.response.to.have.status(200);", "});", "pm.test('Response has updated name', function () {", "    var json = pm.response.json();", "    pm.expect(json.name).to.eql('Pizzaria Atualizada');", "});"]}}],
+              "request": { "method": "PUT", "url": "{{localUrl}}/api/v1/restaurants/{{restaurantId}}", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Pizzaria Atualizada\",\n  \"address\": \"Rua Nova, 456\",\n  \"cuisineType\": \"ITALIANA\",\n  \"openingHours\": \"2024-01-01T10:00:00\",\n  \"closingTime\": \"2024-01-02T00:00:00\",\n  \"ownerId\": \"{{userId}}\"\n}"} }
             },
             {
               "name": "Atualizar Restaurante - ID inexistente ❌ 404",
-              "request": { "method": "PUT", "url": "{{localUrl}}/api/v1/restaurants/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Novo Nome\",\n  \"address\": \"Rua Teste\",\n  \"cuisineType\": \"Teste\",\n  \"openingHours\": \"11:00\",\n  \"closingTime\": \"23:00\"\n}"} }
+              "event": [{"listen": "test", "script": {"exec": ["pm.test('Status code is 404', function () {", "    pm.response.to.have.status(404);", "});"]}}],
+              "request": { "method": "PUT", "url": "{{localUrl}}/api/v1/restaurants/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Novo Nome\",\n  \"address\": \"Rua Teste\",\n  \"cuisineType\": \"BRASILEIRA\",\n  \"openingHours\": \"2024-01-01T11:00:00\",\n  \"closingTime\": \"2024-01-01T23:00:00\",\n  \"ownerId\": \"{{userId}}\"\n}"} }
             },
             {
               "name": "Deletar Restaurante ✅ 204",
+              "event": [{"listen": "test", "script": {"exec": ["pm.test('Status code is 204', function () {", "    pm.response.to.have.status(204);", "});"]}}],
               "request": { "method": "DELETE", "url": "{{localUrl}}/api/v1/restaurants/{{restaurantId}}" }
             },
             {
               "name": "Deletar Restaurante - ID inexistente ❌ 404",
+              "event": [{"listen": "test", "script": {"exec": ["pm.test('Status code is 404', function () {", "    pm.response.to.have.status(404);", "});"]}}],
               "request": { "method": "DELETE", "url": "{{localUrl}}/api/v1/restaurants/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee" }
             }
           ]
