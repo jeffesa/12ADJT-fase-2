@@ -24,7 +24,7 @@ Collection completa de testes para a API de Gestão de Restaurantes.
 | Variável | Valor padrão | Descrição |
 |----------|--------------|-----------|
 | `localUrl` | `http://localhost:8080` | URL do ambiente local |
-| `prodUrl` | `https://12adjt-fase-2.onrender.com` | URL do ambiente de produção |
+| `prodUrl` | `https://one2adjt-fase-2.onrender.com` | URL do ambiente de produção |
 | `userTypeId` | (auto) | Preenchido ao criar UserType |
 | `userId` | (auto) | Preenchido ao criar User |
 | `restaurantId` | (manual) | ID do restaurante (aguarda TASK-020) |

@@ -73,13 +73,13 @@ Após o build completar, teste:
 
 ```bash
 # Health Check
-curl https://12adjt-fase-2.onrender.com/actuator/health
+curl https://one2adjt-fase-2.onrender.com/actuator/health
 
 # Swagger UI
-# Abra no navegador: https://12adjt-fase-2.onrender.com/swagger-ui.html
+# Abra no navegador: https://one2adjt-fase-2.onrender.com/swagger-ui.html
 
 # Listar tipos de usuário
-curl https://12adjt-fase-2.onrender.com/api/v1/user-types
+curl https://one2adjt-fase-2.onrender.com/api/v1/user-types
 ```
 
 ---
@@ -129,7 +129,7 @@ Para integrar com GitHub Actions, adicione o secret `RENDER_DEPLOY_HOOK_URL`:
 ## 🎨 Badge para README
 
 ```markdown
-[![Deploy on Render](https://img.shields.io/badge/Deploy-Render-46E3B7?style=flat&logo=render&logoColor=white)](https://12adjt-fase-2.onrender.com)
+[![Deploy on Render](https://img.shields.io/badge/Deploy-Render-46E3B7?style=flat&logo=render&logoColor=white)](https://one2adjt-fase-2.onrender.com)
 ```
 
 ---
