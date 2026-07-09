@@ -237,7 +237,7 @@
             {
               "name": "Buscar Restaurantes por Owner ✅ 200",
               "event": [{"listen": "test", "script": {"exec": ["pm.test('Status code is 200', function () {", "    pm.response.to.have.status(200);", "});", "pm.test('Response is an array', function () {", "    var json = pm.response.json();", "    pm.expect(json).to.be.an('array');", "    pm.expect(json.length).to.be.greaterThan(0);", "});"]}}],
-              "request": { "method": "GET", "url": "{{localUrl}}/api/v1/restaurants/owner/{{userId}}" }
+              "request": { "method": "GET", "url": "{{localUrl}}/api/v1/restaurants?ownerId={{userId}}" }
             },
             {
               "name": "Atualizar Restaurante ✅ 200",

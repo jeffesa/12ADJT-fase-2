@@ -309,7 +309,7 @@ run_collection_shell() {
   _get "$API_URL/api/v1/restaurants/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
   _assert "Buscar Restaurante - ID inexistente" 404 "$HTTP_CODE" "$BODY"
 
-  _get "$API_URL/api/v1/restaurants/owner/$USER_ID"
+  _get "$API_URL/api/v1/restaurants?ownerId=$USER_ID"
   _assert "Buscar Restaurantes por Owner" 200 "$HTTP_CODE" "$BODY"
 
   _put "$API_URL/api/v1/restaurants/$RESTAURANT_ID" "{\"name\": \"Pizzaria Atualizada\", \"address\": \"Rua Nova, 456\", \"cuisineType\": \"ITALIANA\", \"openingHours\": \"2024-01-01T10:00:00\", \"closingTime\": \"2024-01-02T00:00:00\", \"ownerId\": \"$USER_ID\"}"
