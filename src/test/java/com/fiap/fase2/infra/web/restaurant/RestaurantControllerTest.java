@@ -96,6 +96,20 @@ class RestaurantControllerTest {
     }
 
     @Test
+    void findAllRestaurants_shouldFilterByOwnerId() throws Exception {
+        UUID ownerId = UUID.randomUUID();
+        Restaurant r1 = new Restaurant(UUID.randomUUID(), "A", "Addr A", "ITALIANA",
+                LocalDateTime.of(2024,1,1,11,0), LocalDateTime.of(2024,1,1,23,0), ownerId);
+
+        Mockito.when(findRestaurantsByOwnerUseCase.execute(ownerId)).thenReturn(List.of(r1));
+
+        mockMvc.perform(get("/api/v1/restaurants").param("ownerId", ownerId.toString()).accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(1))
+                .andExpect(jsonPath("$[0].ownerId").value(ownerId.toString()));
+    }
+
+    @Test
     void findRestaurantById_shouldReturn200WhenFound() throws Exception {
         UUID id = UUID.randomUUID();
         Restaurant r = new Restaurant(id, "A", "Addr A", "ITALIANA",

@@ -226,9 +226,9 @@ class RestaurantIntegrationTest {
 
     @Test
     @Order(12)
-    @DisplayName("GET /owner/{ownerId} - Deve buscar restaurantes por owner e retornar 200")
+    @DisplayName("GET ?ownerId={ownerId} - Deve buscar restaurantes por owner e retornar 200")
     void shouldFindRestaurantsByOwner() throws Exception {
-        mockMvc.perform(get(RESTAURANTS_URL + "/owner/" + ownerId).accept(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get(RESTAURANTS_URL).param("ownerId", ownerId).accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(greaterThanOrEqualTo(1))))
                 .andExpect(jsonPath("$[0].ownerId", is(ownerId)));

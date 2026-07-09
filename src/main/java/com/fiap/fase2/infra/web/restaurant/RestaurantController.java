@@ -81,8 +81,14 @@ public class RestaurantController {
             @ApiResponse(responseCode = "200", description = "Lista de restaurantes retornada")
     })
     @GetMapping
-    public ResponseEntity<List<RestaurantResponse>> findAllRestaurants() {
-        List<Restaurant> restaurants = findAllRestaurantsUseCase.execute();
+    public ResponseEntity<List<RestaurantResponse>> findAllRestaurants(
+            @RequestParam(required = false) UUID ownerId) {
+        List<Restaurant> restaurants;
+        if (ownerId != null) {
+            restaurants = findRestaurantsByOwnerUseCase.execute(ownerId);
+        } else {
+            restaurants = findAllRestaurantsUseCase.execute();
+        }
         List<RestaurantResponse> response = restaurants.stream()
                 .map(RestaurantResponse::fromDomain)
                 .collect(Collectors.toList());
@@ -98,20 +104,6 @@ public class RestaurantController {
     public ResponseEntity<RestaurantResponse> findRestaurantById(@PathVariable UUID id) {
         Restaurant restaurant = findRestaurantByIdUseCase.execute(id);
         return ResponseEntity.ok(RestaurantResponse.fromDomain(restaurant));
-    }
-
-    @Operation(summary = "Buscar restaurante por owner")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Restaurante encontrado"),
-            @ApiResponse(responseCode = "404", description = "Restaurante não encontrado")
-    })
-    @GetMapping("/owner/{ownerId}")
-    public ResponseEntity<List<RestaurantResponse>> findRestaurantsByOwner(@PathVariable UUID ownerId) {
-        List<Restaurant> restaurants = findRestaurantsByOwnerUseCase.execute(ownerId);
-        List<RestaurantResponse> response = restaurants.stream()
-                .map(RestaurantResponse::fromDomain)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(response);
     }
 
     @Operation(summary = "Atualizar restaurante")
