@@ -1,6 +1,11 @@
 package com.fiap.fase2.infra.persistence.restaurant;
 
 import com.fiap.fase2.domain.restaurant.Restaurant;
+import com.fiap.fase2.infra.persistence.user.UserJpaEntity;
+import com.fiap.fase2.infra.persistence.user.UserRepository;
+import com.fiap.fase2.infra.persistence.usertype.UserTypeJpaEntity;
+import com.fiap.fase2.infra.persistence.usertype.UserTypeRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,24 +28,60 @@ class RestaurantJpaGatewayTest {
     @Autowired
     private RestaurantJpaGateway gateway;
 
-    private Restaurant buildRestaurant(UUID ownerId) {
-        return new Restaurant(UUID.randomUUID(), "Pizzaria", "Rua A, 123", "ITALIANA",
-                LocalDateTime.of(2024, 1, 1, 11, 0), LocalDateTime.of(2024, 1, 1, 23, 0), ownerId);
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private UserTypeRepository userTypeRepository;
+
+    private UserJpaEntity owner;
+
+    @BeforeEach
+    void setUp() {
+        // Create a default user type
+        UserTypeJpaEntity userType = new UserTypeJpaEntity(UUID.randomUUID(), "ADMIN");
+        userTypeRepository.save(userType);
+
+        // Create a default owner user
+        owner = new UserJpaEntity(
+                UUID.randomUUID(),
+                "Owner Name",
+                "owner@example.com",
+                "ownerlogin",
+                "password123",
+                "Owner Address",
+                LocalDateTime.now(),
+                userType
+        );
+        userRepository.save(owner);
+    }
+
+    private Restaurant buildRestaurant(UserJpaEntity owner) {
+        return new Restaurant(
+                UUID.randomUUID(),
+                "Pizzaria",
+                "Rua A, 123",
+                "ITALIANA",
+                LocalDateTime.of(2024, 1, 1, 11, 0),
+                LocalDateTime.of(2024, 1, 1, 23, 0),
+                owner.getId()
+        );
     }
 
     @Test
     @DisplayName("Deve criar restaurante")
     void shouldCreate() {
-        Restaurant restaurant = buildRestaurant(UUID.randomUUID());
+        Restaurant restaurant = buildRestaurant(owner);
         Restaurant saved = gateway.create(restaurant);
         assertNotNull(saved);
         assertEquals("Pizzaria", saved.getName());
+        assertEquals(owner.getId(), saved.getOwnerId());
     }
 
     @Test
     @DisplayName("Deve buscar por ID")
     void shouldFindById() {
-        Restaurant restaurant = gateway.create(buildRestaurant(UUID.randomUUID()));
+        Restaurant restaurant = gateway.create(buildRestaurant(owner));
         Optional<Restaurant> result = gateway.findById(restaurant.getId());
         assertTrue(result.isPresent());
     }
@@ -54,8 +95,8 @@ class RestaurantJpaGatewayTest {
     @Test
     @DisplayName("Deve listar todos")
     void shouldFindAll() {
-        gateway.create(buildRestaurant(UUID.randomUUID()));
-        gateway.create(buildRestaurant(UUID.randomUUID()));
+        gateway.create(buildRestaurant(owner));
+        gateway.create(buildRestaurant(owner));
         List<Restaurant> result = gateway.findAll();
         assertEquals(2, result.size());
     }
@@ -63,18 +104,37 @@ class RestaurantJpaGatewayTest {
     @Test
     @DisplayName("Deve buscar por ownerId")
     void shouldFindByOwnerId() {
-        UUID ownerId = UUID.randomUUID();
-        gateway.create(buildRestaurant(ownerId));
-        gateway.create(buildRestaurant(ownerId));
-        gateway.create(buildRestaurant(UUID.randomUUID()));
-        List<Restaurant> result = gateway.findByOwnerId(ownerId);
+        // Create another owner
+        UserTypeJpaEntity userType = new UserTypeJpaEntity(UUID.randomUUID(), "USER");
+        userTypeRepository.save(userType);
+
+        UserJpaEntity otherOwner = new UserJpaEntity(
+                UUID.randomUUID(),
+                "Other Owner",
+                "other@example.com",
+                "otherlogin",
+                "password123",
+                "Other Address",
+                LocalDateTime.now(),
+                userType
+        );
+        userRepository.save(otherOwner);
+
+        // Create restaurants for both owners
+        gateway.create(buildRestaurant(owner));
+        gateway.create(buildRestaurant(owner));
+        gateway.create(buildRestaurant(otherOwner));
+
+        // Find by owner ID
+        List<Restaurant> result = gateway.findByOwnerId(owner.getId());
         assertEquals(2, result.size());
+        assertTrue(result.stream().allMatch(r -> r.getOwnerId().equals(owner.getId())));
     }
 
     @Test
     @DisplayName("Deve deletar")
     void shouldDelete() {
-        Restaurant restaurant = gateway.create(buildRestaurant(UUID.randomUUID()));
+        Restaurant restaurant = gateway.create(buildRestaurant(owner));
         gateway.delete(restaurant.getId());
         assertTrue(gateway.findById(restaurant.getId()).isEmpty());
     }

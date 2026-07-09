@@ -2,6 +2,8 @@ package com.fiap.fase2.infra.web.menuitem;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fiap.fase2.infra.persistence.restaurant.RestaurantJpaEntity;
+import com.fiap.fase2.infra.persistence.user.UserJpaEntity;
+import com.fiap.fase2.infra.persistence.usertype.UserTypeJpaEntity;
 import com.fiap.fase2.infra.persistence.restaurant.RestaurantRepository;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +33,8 @@ class MenuItemIntegrationTest {
     @Autowired private MockMvc mockMvc;
     @Autowired private ObjectMapper objectMapper;
     @Autowired private RestaurantRepository restaurantRepository;
+    @Autowired private com.fiap.fase2.infra.persistence.user.UserRepository userRepository;
+    @Autowired private com.fiap.fase2.infra.persistence.usertype.UserTypeRepository userTypeRepository;
 
     private static String restaurantId;
     private static String menuItemId;
@@ -38,10 +42,16 @@ class MenuItemIntegrationTest {
     @BeforeEach
     void setUp() {
         if (restaurantId == null) {
+            UserTypeJpaEntity userType = new UserTypeJpaEntity(UUID.randomUUID(), "RESTAURANT_OWNER");
+            userTypeRepository.save(userType);
+
+            UserJpaEntity owner = new UserJpaEntity(UUID.randomUUID(), "Owner", "owner@example.com", "ownerlogin", "pass", "Addr", LocalDateTime.now(), userType);
+            userRepository.save(owner);
+
             RestaurantJpaEntity restaurant = restaurantRepository.save(
                     new RestaurantJpaEntity(UUID.randomUUID(), "Pizzaria", "Rua A, 123",
                             "ITALIANA", LocalDateTime.of(2024, 1, 1, 11, 0),
-                            LocalDateTime.of(2024, 1, 1, 23, 0), UUID.randomUUID()));
+                            LocalDateTime.of(2024, 1, 1, 23, 0), owner));
             restaurantId = restaurant.getId().toString();
         }
     }
