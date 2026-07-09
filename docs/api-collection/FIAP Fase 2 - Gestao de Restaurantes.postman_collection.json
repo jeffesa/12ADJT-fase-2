@@ -6,7 +6,7 @@
   },
   "variable": [
     { "key": "localUrl", "value": "http://localhost:8080" },
-    { "key": "prodUrl", "value": "https://12adjt-fase-2.onrender.com" },
+    { "key": "prodUrl", "value": "https://one2adjt-fase-2.onrender.com" },
     { "key": "userTypeId", "value": "" },
     { "key": "userId", "value": "" },
     { "key": "restaurantId", "value": "" },

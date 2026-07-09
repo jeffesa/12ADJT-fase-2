@@ -6,9 +6,9 @@
 
 Sistema de gestão de restaurantes desenvolvido com Spring Boot para o Tech Challenge - Fase 2 da FIAP.
 
-> 🌐 **Aplicação em produção:** [https://12adjt-fase-2.onrender.com](https://12adjt-fase-2.onrender.com)
+> 🌐 **Aplicação em produção:** [https://one2adjt-fase-2.onrender.com](https://one2adjt-fase-2.onrender.com)
 >
-> 📖 **Swagger UI:** [https://12adjt-fase-2.onrender.com/swagger-ui.html](https://12adjt-fase-2.onrender.com/swagger-ui.html)
+> 📖 **Swagger UI:** [https://one2adjt-fase-2.onrender.com/swagger-ui.html](https://one2adjt-fase-2.onrender.com/swagger-ui.html)
 >
 > 📬 **Collection Postman:** [`docs/api-collection/`](docs/api-collection/) — [Como importar e executar](docs/api-collection/README.md)
 
