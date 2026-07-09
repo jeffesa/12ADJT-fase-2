@@ -282,6 +282,49 @@ run_collection_shell() {
   _assert "Trocar Senha - ID inexistente" 404 "$HTTP_CODE" "$BODY"
   echo ""
 
+  # --- Restaurantes ---
+  echo -e "\033[0;36m── Restaurantes ──\033[0m"
+  _post "$API_URL/api/v1/user-types" '{"name": "REST_OWNER"}'
+  USER_TYPE_ID=$(echo "$BODY" | jq -r '.id // empty')
+
+  _post "$API_URL/api/v1/users" "{\"name\": \"Owner Rest\", \"email\": \"ownerrest@email.com\", \"login\": \"ownerrest\", \"password\": \"Senha123\", \"address\": \"Rua Owner, 1\", \"userTypeId\": \"$USER_TYPE_ID\"}"
+  USER_ID=$(echo "$BODY" | jq -r '.id // empty')
+
+  _post "$API_URL/api/v1/restaurants" "{\"name\": \"Pizzaria do João\", \"address\": \"Rua das Flores, 123\", \"cuisineType\": \"ITALIANA\", \"openingHours\": \"2024-01-01T11:00:00\", \"closingTime\": \"2024-01-01T23:00:00\", \"ownerId\": \"$USER_ID\"}"
+  _assert "Criar Restaurante" 201 "$HTTP_CODE" "$BODY"
+  RESTAURANT_ID=$(echo "$BODY" | jq -r '.id // empty')
+
+  _post "$API_URL/api/v1/restaurants" "{\"name\": \"Inválido\", \"address\": \"Rua X\", \"cuisineType\": \"BRASILEIRA\", \"openingHours\": \"2024-01-01T08:00:00\", \"closingTime\": \"2024-01-01T22:00:00\", \"ownerId\": \"aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee\"}"
+  _assert "Criar Restaurante - Owner inexistente" 422 "$HTTP_CODE" "$BODY"
+
+  _post "$API_URL/api/v1/restaurants" "{\"name\": \"\", \"address\": \"Rua Z\", \"cuisineType\": \"MEXICANA\", \"openingHours\": \"2024-01-01T09:00:00\", \"closingTime\": \"2024-01-01T21:00:00\", \"ownerId\": \"$USER_ID\"}"
+  _assert "Criar Restaurante - Nome vazio" 400 "$HTTP_CODE" "$BODY"
+
+  _get "$API_URL/api/v1/restaurants"
+  _assert "Listar Restaurantes" 200 "$HTTP_CODE" "$BODY"
+
+  _get "$API_URL/api/v1/restaurants/$RESTAURANT_ID"
+  _assert "Buscar Restaurante por ID" 200 "$HTTP_CODE" "$BODY"
+
+  _get "$API_URL/api/v1/restaurants/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
+  _assert "Buscar Restaurante - ID inexistente" 404 "$HTTP_CODE" "$BODY"
+
+  _get "$API_URL/api/v1/restaurants/owner/$USER_ID"
+  _assert "Buscar Restaurantes por Owner" 200 "$HTTP_CODE" "$BODY"
+
+  _put "$API_URL/api/v1/restaurants/$RESTAURANT_ID" "{\"name\": \"Pizzaria Atualizada\", \"address\": \"Rua Nova, 456\", \"cuisineType\": \"ITALIANA\", \"openingHours\": \"2024-01-01T10:00:00\", \"closingTime\": \"2024-01-02T00:00:00\", \"ownerId\": \"$USER_ID\"}"
+  _assert "Atualizar Restaurante" 200 "$HTTP_CODE" "$BODY"
+
+  _put "$API_URL/api/v1/restaurants/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee" "{\"name\": \"Novo\", \"address\": \"Rua\", \"cuisineType\": \"X\", \"openingHours\": \"2024-01-01T11:00:00\", \"closingTime\": \"2024-01-01T23:00:00\", \"ownerId\": \"$USER_ID\"}"
+  _assert "Atualizar Restaurante - ID inexistente" 404 "$HTTP_CODE" "$BODY"
+
+  _del "$API_URL/api/v1/restaurants/$RESTAURANT_ID"
+  _assert "Deletar Restaurante" 204 "$HTTP_CODE" "$BODY"
+
+  _del "$API_URL/api/v1/restaurants/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
+  _assert "Deletar Restaurante - ID inexistente" 404 "$HTTP_CODE" "$BODY"
+  echo ""
+
   # --- Cardápio (MenuItem) ---
   echo -e "\033[0;36m── Cardápio (MenuItem) ──\033[0m"
   _post "$API_URL/api/v1/user-types" '{"name": "OWNER_MENU"}'
