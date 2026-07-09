@@ -21,6 +21,7 @@ public class Restaurant {
         validateCuisineType(cuisineType);
         validateOpeningHours(openingHours);
         validateClosingTime(closingTime);
+        validateBusinessHours(openingHours, closingTime);
         validateOwnerId(ownerId);
 
         this.id = id;
@@ -73,6 +74,7 @@ public class Restaurant {
 
     public void setOpeningHours(LocalDateTime openingHours) {
         validateOpeningHours(openingHours);
+        validateBusinessHours(openingHours, this.closingTime);
         this.openingHours = openingHours;
     }
 
@@ -82,6 +84,7 @@ public class Restaurant {
 
     public void setClosingTime(LocalDateTime closingTime) {
         validateClosingTime(closingTime);
+        validateBusinessHours(this.openingHours, closingTime);
         this.closingTime = closingTime;
     }
 
@@ -127,6 +130,14 @@ public class Restaurant {
     private void validateOwnerId(UUID ownerId) {
         if (ownerId == null) {
             throw new IllegalArgumentException("ID do proprietário é obrigatório");
+        }
+    }
+
+    private void validateBusinessHours(LocalDateTime openingHours, LocalDateTime closingTime) {
+        if (openingHours != null && closingTime != null) {
+            if (closingTime.isBefore(openingHours) || closingTime.isEqual(openingHours)) {
+                throw new IllegalArgumentException("Horário de fechamento deve ser após o horário de abertura");
+            }
         }
     }
 }

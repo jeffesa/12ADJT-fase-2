@@ -1,5 +1,6 @@
 package com.fiap.fase2.infra.persistence.restaurant;
 
+import com.fiap.fase2.infra.persistence.user.UserJpaEntity;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -27,20 +28,21 @@ public class RestaurantJpaEntity {
     @Column(nullable = false)
     private LocalDateTime closingTime;
 
-    @Column(name = "owner_id", nullable = false)
-    private UUID ownerId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "owner_id", nullable = false)
+    private UserJpaEntity owner;
 
     public RestaurantJpaEntity() {
     }
 
-    public RestaurantJpaEntity(UUID id, String name, String address, String cuisineType, LocalDateTime openingHours, LocalDateTime closingTime, UUID ownerId) {
+    public RestaurantJpaEntity(UUID id, String name, String address, String cuisineType, LocalDateTime openingHours, LocalDateTime closingTime, UserJpaEntity owner) {
         this.id = id;
         this.name = name;
         this.address = address;
         this.cuisineType = cuisineType;
         this.openingHours = openingHours;
         this.closingTime = closingTime;
-        this.ownerId = ownerId;
+        this.owner = owner;
     }
 
     public UUID getId() { return id; }
@@ -55,6 +57,6 @@ public class RestaurantJpaEntity {
     public void setOpeningHours(LocalDateTime openingHours) { this.openingHours = openingHours; }
     public LocalDateTime getClosingTime() { return closingTime; }
     public void setClosingTime(LocalDateTime closingTime) { this.closingTime = closingTime; }
-    public UUID getOwnerId() { return ownerId; }
-    public void setOwnerId(UUID ownerId) { this.ownerId = ownerId; }
+    public UserJpaEntity getOwner() { return owner; }
+    public void setOwner(UserJpaEntity owner) { this.owner = owner; }
 }

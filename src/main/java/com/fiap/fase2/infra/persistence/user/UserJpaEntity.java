@@ -1,9 +1,12 @@
 package com.fiap.fase2.infra.persistence.user;
 
+import com.fiap.fase2.infra.persistence.restaurant.RestaurantJpaEntity;
 import com.fiap.fase2.infra.persistence.usertype.UserTypeJpaEntity;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -35,6 +38,9 @@ public class UserJpaEntity {
     @JoinColumn(name = "user_type_id", nullable = false)
     private UserTypeJpaEntity userType;
 
+    @OneToMany(mappedBy = "owner", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<RestaurantJpaEntity> restaurants = new ArrayList<>();
+
     public UserJpaEntity() {
     }
 
@@ -48,6 +54,7 @@ public class UserJpaEntity {
         this.address = address;
         this.lastModifiedDate = lastModifiedDate;
         this.userType = userType;
+        this.restaurants = new ArrayList<>();
     }
 
     public UUID getId() { return id; }
@@ -66,4 +73,6 @@ public class UserJpaEntity {
     public void setLastModifiedDate(LocalDateTime lastModifiedDate) { this.lastModifiedDate = lastModifiedDate; }
     public UserTypeJpaEntity getUserType() { return userType; }
     public void setUserType(UserTypeJpaEntity userType) { this.userType = userType; }
+    public List<RestaurantJpaEntity> getRestaurants() { return restaurants; }
+    public void setRestaurants(List<RestaurantJpaEntity> restaurants) { this.restaurants = restaurants; }
 }

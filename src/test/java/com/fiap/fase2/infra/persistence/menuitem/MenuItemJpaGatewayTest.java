@@ -2,6 +2,8 @@ package com.fiap.fase2.infra.persistence.menuitem;
 
 import com.fiap.fase2.domain.menuitem.MenuItem;
 import com.fiap.fase2.infra.persistence.restaurant.RestaurantJpaEntity;
+import com.fiap.fase2.infra.persistence.user.UserJpaEntity;
+import com.fiap.fase2.infra.persistence.usertype.UserTypeJpaEntity;
 import com.fiap.fase2.infra.persistence.restaurant.RestaurantRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -29,15 +31,25 @@ class MenuItemJpaGatewayTest {
 
     @Autowired
     private RestaurantRepository restaurantRepository;
+    @Autowired
+    private com.fiap.fase2.infra.persistence.user.UserRepository userRepository;
+    @Autowired
+    private com.fiap.fase2.infra.persistence.usertype.UserTypeRepository userTypeRepository;
 
     private UUID restaurantId;
 
     @BeforeEach
     void setUp() {
+        UserTypeJpaEntity userType = new UserTypeJpaEntity(UUID.randomUUID(), "RESTAURANT_OWNER");
+        userTypeRepository.save(userType);
+
+        UserJpaEntity owner = new UserJpaEntity(UUID.randomUUID(), "Owner", "owner@example.com", "ownerlogin", "pass", "Addr", LocalDateTime.now(), userType);
+        userRepository.save(owner);
+
         RestaurantJpaEntity restaurant = restaurantRepository.save(
                 new RestaurantJpaEntity(UUID.randomUUID(), "Pizzaria", "Rua A",
                         "ITALIANA", LocalDateTime.of(2024, 1, 1, 11, 0),
-                        LocalDateTime.of(2024, 1, 1, 23, 0), UUID.randomUUID()));
+                        LocalDateTime.of(2024, 1, 1, 23, 0), owner));
         restaurantId = restaurant.getId();
     }
 

@@ -183,6 +183,8 @@ public class RestaurantTest {
     }
 
     private Restaurant createValidRestaurant() {
-        return new Restaurant(UUID.randomUUID(), "Restaurante Teste", "Rua Teste, 123", "ITALIANA", LocalDateTime.now(), LocalDateTime.now(), UUID.randomUUID());
+        LocalDateTime opening = LocalDateTime.now();
+        LocalDateTime closing = opening.plusHours(12);
+        return new Restaurant(UUID.randomUUID(), "Restaurante Teste", "Rua Teste, 123", "ITALIANA", opening, closing, UUID.randomUUID());
     }
 }
