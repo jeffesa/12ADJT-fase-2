@@ -1,7 +1,7 @@
 # Documentação da API - Gestão de Restaurantes
 
 Base URL Local: `http://localhost:8080`  
-Base URL Produção: `https://12adjt-fase-2.onrender.com`  
+Base URL Produção: `https://one2adjt-fase-2.onrender.com`  
 Documentação interativa (Swagger): `http://localhost:8080/swagger-ui.html`
 
 > ⚠️ O primeiro acesso ao Render.com pode demorar ~50 segundos (instância gratuita em modo de espera).
