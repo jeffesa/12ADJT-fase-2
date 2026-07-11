@@ -12,6 +12,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -19,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class DeleteRestaurantUseCaseTest {
+class DeleteRestaurantUseCaseTest {
     @Mock
     private RestaurantGateway restaurantGateway;
 
@@ -34,7 +35,7 @@ public class DeleteRestaurantUseCaseTest {
         restaurantId = UUID.randomUUID();
         ownerId = UUID.randomUUID();
         restaurant = new Restaurant(restaurantId, "Pizzaria do João", "Rua A, 123", "ITALIANA",
-                LocalDateTime.of(2024, 1, 1, 11, 0), LocalDateTime.of(2024, 1, 1, 23, 0), ownerId);
+                LocalDateTime.of(2024, Month.JANUARY, 1, 11, 0), LocalDateTime.of(2024, Month.JANUARY, 1, 23, 0), ownerId);
     }
 
     @Test

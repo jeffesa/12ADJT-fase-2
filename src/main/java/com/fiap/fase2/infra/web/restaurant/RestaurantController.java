@@ -111,8 +111,9 @@ public class RestaurantController {
             @PathVariable UUID id,
             @RequestHeader(value = "X-User-Id", required = false) UUID userId,
             @Valid @RequestBody RestaurantUpdateRequest request) {
-        Restaurant updated = updateRestaurantUseCase.executeWithOwnerCheck(id, request.name(), request.address(),
-                request.cuisineType(), request.openingHours(), request.closingTime(), request.ownerId(), userId);
+        updateRestaurantUseCase.validateOwnership(id, userId);
+        Restaurant updated = updateRestaurantUseCase.execute(id, request.name(), request.address(),
+                request.cuisineType(), request.openingHours(), request.closingTime(), request.ownerId());
         return ResponseEntity.ok(RestaurantResponse.fromDomain(updated));
     }
 }

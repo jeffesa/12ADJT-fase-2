@@ -19,19 +19,19 @@ public class UpdateRestaurantUseCase {
         this.userGateway = userGateway;
     }
 
-    public Restaurant execute(UUID id, String name, String address, String cuisineType,
-                              LocalDateTime openingHours, LocalDateTime closingTime, UUID ownerId) {
-        return executeWithOwnerCheck(id, name, address, cuisineType, openingHours, closingTime, ownerId, null);
-    }
-
-    public Restaurant executeWithOwnerCheck(UUID id, String name, String address, String cuisineType,
-                              LocalDateTime openingHours, LocalDateTime closingTime, UUID ownerId, UUID userId) {
-        Restaurant existing = restaurantGateway.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Restaurante não encontrado com id: " + id));
-
-        if (userId != null && !userId.equals(existing.getOwnerId())) {
+    public void validateOwnership(UUID restaurantId, UUID userId) {
+        if (userId == null) return;
+        Restaurant existing = restaurantGateway.findById(restaurantId)
+                .orElseThrow(() -> new EntityNotFoundException("Restaurante não encontrado com id: " + restaurantId));
+        if (!userId.equals(existing.getOwnerId())) {
             throw new BusinessException("Somente o proprietário pode alterar este restaurante");
         }
+    }
+
+    public Restaurant execute(UUID id, String name, String address, String cuisineType,
+                              LocalDateTime openingHours, LocalDateTime closingTime, UUID ownerId) {
+        Restaurant existing = restaurantGateway.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Restaurante não encontrado com id: " + id));
 
         if (ownerId != null && !ownerId.equals(existing.getOwnerId())) {
             User newOwner = userGateway.findById(ownerId)
