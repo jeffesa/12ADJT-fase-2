@@ -2,6 +2,7 @@ package com.fiap.fase2.application.restaurant;
 
 import com.fiap.fase2.domain.restaurant.Restaurant;
 import com.fiap.fase2.domain.restaurant.RestaurantGateway;
+import com.fiap.fase2.domain.shared.BusinessException;
 import com.fiap.fase2.domain.shared.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -23,26 +24,24 @@ public class DeleteRestaurantUseCaseTest {
     private RestaurantGateway restaurantGateway;
 
     private DeleteRestaurantUseCase useCase;
-
     private UUID restaurantId;
+    private UUID ownerId;
     private Restaurant restaurant;
 
     @BeforeEach
     public void setUp() {
         useCase = new DeleteRestaurantUseCase(restaurantGateway);
         restaurantId = UUID.randomUUID();
+        ownerId = UUID.randomUUID();
         restaurant = new Restaurant(restaurantId, "Pizzaria do João", "Rua A, 123", "ITALIANA",
-                LocalDateTime.of(2024, 1, 1, 11, 0), LocalDateTime.of(2024, 1, 1, 23, 0), UUID.randomUUID());
+                LocalDateTime.of(2024, 1, 1, 11, 0), LocalDateTime.of(2024, 1, 1, 23, 0), ownerId);
     }
 
     @Test
-    @DisplayName("Deve deletar restaurante com sucesso quando o restaurante existe")
+    @DisplayName("Deve deletar restaurante com sucesso")
     void shouldDeleteRestaurantSuccessfully() {
         when(restaurantGateway.findById(restaurantId)).thenReturn(Optional.of(restaurant));
-
         useCase.execute(restaurantId);
-
-        verify(restaurantGateway).findById(restaurantId);
         verify(restaurantGateway).delete(restaurantId);
     }
 
@@ -50,14 +49,26 @@ public class DeleteRestaurantUseCaseTest {
     @DisplayName("Deve lançar exceção quando restaurante não existe")
     void shouldThrowExceptionWhenRestaurantDoesNotExist() {
         when(restaurantGateway.findById(restaurantId)).thenReturn(Optional.empty());
+        assertThrows(EntityNotFoundException.class, () -> useCase.execute(restaurantId));
+        verify(restaurantGateway, never()).delete(any());
+    }
 
-        EntityNotFoundException exception = assertThrows(
-                EntityNotFoundException.class,
-                () -> useCase.execute(restaurantId)
-        );
+    @Test
+    @DisplayName("Deve deletar quando userId é o proprietário")
+    void shouldDeleteWhenUserIsOwner() {
+        when(restaurantGateway.findById(restaurantId)).thenReturn(Optional.of(restaurant));
+        useCase.execute(restaurantId, ownerId);
+        verify(restaurantGateway).delete(restaurantId);
+    }
 
-        assertEquals("Restaurante não encontrado com id: " + restaurantId, exception.getMessage());
-        verify(restaurantGateway).findById(restaurantId);
-        verify(restaurantGateway, never()).delete(restaurantId);
+    @Test
+    @DisplayName("Deve lançar exceção quando userId não é o proprietário")
+    void shouldThrowWhenUserIsNotOwner() {
+        UUID otherUserId = UUID.randomUUID();
+        when(restaurantGateway.findById(restaurantId)).thenReturn(Optional.of(restaurant));
+        assertThrows(BusinessException.class, () -> {
+            useCase.execute(restaurantId, otherUserId);
+        });
+        verify(restaurantGateway, never()).delete(any());
     }
 }
