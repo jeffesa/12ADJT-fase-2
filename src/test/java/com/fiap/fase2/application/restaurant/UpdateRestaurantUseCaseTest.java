@@ -284,4 +284,18 @@ public class UpdateRestaurantUseCaseTest {
         verify(userGateway).findById(newOwnerId);
         verify(restaurantGateway, never()).update(any());
     }
+    @Test
+    @DisplayName("validateOwnership deve lançar exceção quando userId não é o proprietário")
+    void shouldThrowOnValidateOwnershipWhenNotOwner() {
+        UUID otherUser = UUID.randomUUID();
+        when(restaurantGateway.findById(restaurantId)).thenReturn(java.util.Optional.of(existingRestaurant));
+        assertThrows(com.fiap.fase2.domain.shared.BusinessException.class, () -> useCase.validateOwnership(restaurantId, otherUser));
+    }
+
+    @Test
+    @DisplayName("validateOwnership deve passar quando userId é o proprietário")
+    void shouldPassOnValidateOwnershipWhenOwner() {
+        when(restaurantGateway.findById(restaurantId)).thenReturn(java.util.Optional.of(existingRestaurant));
+        assertDoesNotThrow(() -> useCase.validateOwnership(restaurantId, ownerId));
+    }
 }

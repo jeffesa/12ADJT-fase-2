@@ -30,7 +30,7 @@ class DeleteRestaurantUseCaseTest {
     private Restaurant restaurant;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         useCase = new DeleteRestaurantUseCase(restaurantGateway);
         restaurantId = UUID.randomUUID();
         ownerId = UUID.randomUUID();
