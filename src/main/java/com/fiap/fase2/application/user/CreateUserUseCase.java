@@ -26,6 +26,8 @@ public class CreateUserUseCase {
 
     public User execute(String name, String email, String login, String password,
                         String address, UUID userTypeId) {
+        validatePasswordStrength(password);
+
         userGateway.findByEmail(email).ifPresent(u -> {
             throw new BusinessException("Email já cadastrado: " + email);
         });
@@ -49,5 +51,20 @@ public class CreateUserUseCase {
         );
 
         return userGateway.create(user);
+    }
+
+    private void validatePasswordStrength(String password) {
+        if (password == null || password.length() < 8) {
+            throw new BusinessException("A senha deve ter no mínimo 8 caracteres");
+        }
+        if (!password.matches(".*[A-Z].*")) {
+            throw new BusinessException("A senha deve conter pelo menos uma letra maiúscula");
+        }
+        if (!password.matches(".*[a-z].*")) {
+            throw new BusinessException("A senha deve conter pelo menos uma letra minúscula");
+        }
+        if (!password.matches(".*\\d.*")) {
+            throw new BusinessException("A senha deve conter pelo menos um número");
+        }
     }
 }

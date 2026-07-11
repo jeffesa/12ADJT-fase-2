@@ -12,6 +12,7 @@ public record MenuItemRequest(
         @Schema(description = "Nome do item", example = "Pizza Margherita")
         String name,
 
+        @Size(max = 500, message = "A descrição deve ter no máximo 500 caracteres")
         @Schema(description = "Descrição do item", example = "Molho, mussarela e manjericão")
         String description,
 
