@@ -2,11 +2,11 @@ package com.fiap.fase2.application.user;
 
 import com.fiap.fase2.domain.shared.BusinessException;
 import com.fiap.fase2.domain.shared.EntityNotFoundException;
+import com.fiap.fase2.domain.user.PasswordHasher;
 import com.fiap.fase2.domain.user.User;
 import com.fiap.fase2.domain.user.UserGateway;
 import com.fiap.fase2.domain.usertype.UserType;
 import com.fiap.fase2.domain.usertype.UserTypeGateway;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -15,13 +15,13 @@ public class CreateUserUseCase {
 
     private final UserGateway userGateway;
     private final UserTypeGateway userTypeGateway;
-    private final PasswordEncoder passwordEncoder;
+    private final PasswordHasher passwordHasher;
 
     public CreateUserUseCase(UserGateway userGateway, UserTypeGateway userTypeGateway,
-                             PasswordEncoder passwordEncoder) {
+                             PasswordHasher passwordHasher) {
         this.userGateway = userGateway;
         this.userTypeGateway = userTypeGateway;
-        this.passwordEncoder = passwordEncoder;
+        this.passwordHasher = passwordHasher;
     }
 
     public User execute(String name, String email, String login, String password,
@@ -42,7 +42,7 @@ public class CreateUserUseCase {
                 name,
                 email,
                 login,
-                passwordEncoder.encode(password),
+                passwordHasher.encode(password),
                 address,
                 LocalDateTime.now(),
                 userType
