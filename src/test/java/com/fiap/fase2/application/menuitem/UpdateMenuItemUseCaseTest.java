@@ -2,6 +2,7 @@ package com.fiap.fase2.application.menuitem;
 
 import com.fiap.fase2.domain.menuitem.MenuItem;
 import com.fiap.fase2.domain.menuitem.MenuItemGateway;
+import com.fiap.fase2.domain.shared.BusinessException;
 import com.fiap.fase2.domain.shared.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -52,5 +53,27 @@ class UpdateMenuItemUseCaseTest {
 
         assertThrows(EntityNotFoundException.class, () ->
                 useCase.execute(id, "Sushi", "desc", BigDecimal.TEN, false, null));
+    }
+
+    @Test
+    @DisplayName("Deve lançar exceção com preço zero")
+    void shouldThrowWhenPriceIsZero() {
+        UUID id = UUID.randomUUID();
+        MenuItem existing = new MenuItem(id, "Pizza", "desc", BigDecimal.TEN, false, null, UUID.randomUUID());
+        when(menuItemGateway.findById(id)).thenReturn(Optional.of(existing));
+
+        assertThrows(BusinessException.class, () ->
+                useCase.execute(id, "Pizza", "desc", BigDecimal.ZERO, false, null));
+    }
+
+    @Test
+    @DisplayName("Deve lançar exceção com preço negativo")
+    void shouldThrowWhenPriceIsNegative() {
+        UUID id = UUID.randomUUID();
+        MenuItem existing = new MenuItem(id, "Pizza", "desc", BigDecimal.TEN, false, null, UUID.randomUUID());
+        when(menuItemGateway.findById(id)).thenReturn(Optional.of(existing));
+
+        assertThrows(BusinessException.class, () ->
+                useCase.execute(id, "Pizza", "desc", new BigDecimal("-5.00"), false, null));
     }
 }
