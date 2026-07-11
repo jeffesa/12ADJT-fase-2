@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import com.fiap.fase2.domain.user.PasswordHasher;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -24,13 +24,13 @@ import static org.mockito.Mockito.*;
 class ChangePasswordUseCaseTest {
 
     @Mock private UserGateway userGateway;
-    @Mock private PasswordEncoder passwordEncoder;
+    @Mock private PasswordHasher passwordHasher;
 
     private ChangePasswordUseCase useCase;
 
     @BeforeEach
     void setUp() {
-        useCase = new ChangePasswordUseCase(userGateway, passwordEncoder);
+        useCase = new ChangePasswordUseCase(userGateway, passwordHasher);
     }
 
     @Test
@@ -40,8 +40,8 @@ class ChangePasswordUseCaseTest {
         User user = new User(id, "João", "joao@email.com", "joao",
                 "oldHash", "Rua A", LocalDateTime.now(), new UserType(UUID.randomUUID(), "CUSTOMER"));
         when(userGateway.findById(id)).thenReturn(Optional.of(user));
-        when(passwordEncoder.matches("Senha123", "oldHash")).thenReturn(true);
-        when(passwordEncoder.encode("NovaSenha456")).thenReturn("newHash");
+        when(passwordHasher.matches("Senha123", "oldHash")).thenReturn(true);
+        when(passwordHasher.encode("NovaSenha456")).thenReturn("newHash");
 
         useCase.execute(id, "Senha123", "NovaSenha456");
 
@@ -56,7 +56,7 @@ class ChangePasswordUseCaseTest {
         User user = new User(id, "João", "joao@email.com", "joao",
                 "hash", "Rua A", LocalDateTime.now(), new UserType(UUID.randomUUID(), "CUSTOMER"));
         when(userGateway.findById(id)).thenReturn(Optional.of(user));
-        when(passwordEncoder.matches("errada", "hash")).thenReturn(false);
+        when(passwordHasher.matches("errada", "hash")).thenReturn(false);
 
         assertThrows(IllegalArgumentException.class, () -> useCase.execute(id, "errada", "Nova123"));
         verify(userGateway, never()).update(any());

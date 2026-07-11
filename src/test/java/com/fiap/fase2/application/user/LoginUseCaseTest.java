@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import com.fiap.fase2.domain.user.PasswordHasher;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -23,13 +23,13 @@ import static org.mockito.Mockito.*;
 class LoginUseCaseTest {
 
     @Mock private UserGateway userGateway;
-    @Mock private PasswordEncoder passwordEncoder;
+    @Mock private PasswordHasher passwordHasher;
 
     private LoginUseCase useCase;
 
     @BeforeEach
     void setUp() {
-        useCase = new LoginUseCase(userGateway, passwordEncoder);
+        useCase = new LoginUseCase(userGateway, passwordHasher);
     }
 
     @Test
@@ -38,7 +38,7 @@ class LoginUseCaseTest {
         User user = new User(UUID.randomUUID(), "João", "joao@email.com", "joao",
                 "hash", "Rua A", LocalDateTime.now(), new UserType(UUID.randomUUID(), "CUSTOMER"));
         when(userGateway.findByLogin("joao")).thenReturn(Optional.of(user));
-        when(passwordEncoder.matches("Senha123", "hash")).thenReturn(true);
+        when(passwordHasher.matches("Senha123", "hash")).thenReturn(true);
 
         User result = useCase.execute("joao", "Senha123");
 
@@ -59,7 +59,7 @@ class LoginUseCaseTest {
         User user = new User(UUID.randomUUID(), "João", "joao@email.com", "joao",
                 "hash", "Rua A", LocalDateTime.now(), new UserType(UUID.randomUUID(), "CUSTOMER"));
         when(userGateway.findByLogin("joao")).thenReturn(Optional.of(user));
-        when(passwordEncoder.matches("errada", "hash")).thenReturn(false);
+        when(passwordHasher.matches("errada", "hash")).thenReturn(false);
 
         assertThrows(BusinessException.class, () -> useCase.execute("joao", "errada"));
     }

@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import com.fiap.fase2.domain.user.PasswordHasher;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -26,13 +26,13 @@ class CreateUserUseCaseTest {
 
     @Mock private UserGateway userGateway;
     @Mock private UserTypeGateway userTypeGateway;
-    @Mock private PasswordEncoder passwordEncoder;
+    @Mock private PasswordHasher passwordHasher;
 
     private CreateUserUseCase useCase;
 
     @BeforeEach
     void setUp() {
-        useCase = new CreateUserUseCase(userGateway, userTypeGateway, passwordEncoder);
+        useCase = new CreateUserUseCase(userGateway, userTypeGateway, passwordHasher);
     }
 
     @Test
@@ -42,7 +42,7 @@ class CreateUserUseCaseTest {
         when(userGateway.findByEmail("joao@email.com")).thenReturn(Optional.empty());
         when(userGateway.findByLogin("joao")).thenReturn(Optional.empty());
         when(userTypeGateway.findById(typeId)).thenReturn(Optional.of(new UserType(typeId, "CUSTOMER")));
-        when(passwordEncoder.encode("Senha123")).thenReturn("hash");
+        when(passwordHasher.encode("Senha123")).thenReturn("hash");
         when(userGateway.create(any(User.class))).thenAnswer(inv -> inv.getArgument(0));
 
         User result = useCase.execute("João", "joao@email.com", "joao", "Senha123", "Rua A", typeId);
