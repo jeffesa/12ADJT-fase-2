@@ -1,12 +1,9 @@
 package com.fiap.fase2.infra.persistence.user;
 
-import com.fiap.fase2.infra.persistence.restaurant.RestaurantJpaEntity;
 import com.fiap.fase2.infra.persistence.usertype.UserTypeJpaEntity;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -38,14 +35,11 @@ public class UserJpaEntity {
     @JoinColumn(name = "user_type_id", nullable = false)
     private UserTypeJpaEntity userType;
 
-    @OneToMany(mappedBy = "owner", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<RestaurantJpaEntity> restaurants = new ArrayList<>();
-
     public UserJpaEntity() {
     }
 
     public UserJpaEntity(UUID id, String name, String email, String login, String password,
-                         String address, LocalDateTime lastModifiedDate, UserTypeJpaEntity userType) {
+                         String address, LocalDateTime lastModifiedDate) {
         this.id = id;
         this.name = name;
         this.email = email;
@@ -53,8 +47,12 @@ public class UserJpaEntity {
         this.password = password;
         this.address = address;
         this.lastModifiedDate = lastModifiedDate;
+    }
+
+    public UserJpaEntity(UUID id, String name, String email, String login, String password,
+                         String address, LocalDateTime lastModifiedDate, UserTypeJpaEntity userType) {
+        this(id, name, email, login, password, address, lastModifiedDate);
         this.userType = userType;
-        this.restaurants = new ArrayList<>();
     }
 
     public UUID getId() { return id; }
@@ -73,6 +71,4 @@ public class UserJpaEntity {
     public void setLastModifiedDate(LocalDateTime lastModifiedDate) { this.lastModifiedDate = lastModifiedDate; }
     public UserTypeJpaEntity getUserType() { return userType; }
     public void setUserType(UserTypeJpaEntity userType) { this.userType = userType; }
-    public List<RestaurantJpaEntity> getRestaurants() { return restaurants; }
-    public void setRestaurants(List<RestaurantJpaEntity> restaurants) { this.restaurants = restaurants; }
 }
