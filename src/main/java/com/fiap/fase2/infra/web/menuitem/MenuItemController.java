@@ -44,11 +44,13 @@ public class MenuItemController {
             @ApiResponse(responseCode = "404", description = "Restaurante não encontrado")
     })
     @PostMapping("/api/v1/restaurants/{restaurantId}/menu-items")
-    public ResponseEntity<MenuItemResponse> create(@PathVariable UUID restaurantId,
-                                                   @Valid @RequestBody MenuItemRequest request) {
+    public ResponseEntity<MenuItemResponse> create(
+            @PathVariable UUID restaurantId,
+            @RequestHeader(value = "X-User-Id", required = false) UUID userId,
+            @Valid @RequestBody MenuItemRequest request) {
         MenuItem created = createUseCase.execute(
                 request.name(), request.description(), request.price(),
-                request.dineInOnly(), request.photoPath(), restaurantId
+                request.dineInOnly(), request.photoPath(), restaurantId, userId
         );
         MenuItemResponse response = MenuItemResponse.fromDomain(created);
         URI location = ServletUriComponentsBuilder.fromCurrentContextPath()
@@ -82,10 +84,13 @@ public class MenuItemController {
             @ApiResponse(responseCode = "400", description = "Dados inválidos")
     })
     @PutMapping("/api/v1/menu-items/{id}")
-    public ResponseEntity<MenuItemResponse> update(@PathVariable UUID id, @Valid @RequestBody MenuItemRequest request) {
+    public ResponseEntity<MenuItemResponse> update(
+            @PathVariable UUID id,
+            @RequestHeader(value = "X-User-Id", required = false) UUID userId,
+            @Valid @RequestBody MenuItemRequest request) {
         MenuItem updated = updateUseCase.execute(
                 id, request.name(), request.description(), request.price(),
-                request.dineInOnly(), request.photoPath()
+                request.dineInOnly(), request.photoPath(), userId
         );
         return ResponseEntity.ok(MenuItemResponse.fromDomain(updated));
     }
@@ -96,8 +101,10 @@ public class MenuItemController {
             @ApiResponse(responseCode = "404", description = "Item não encontrado")
     })
     @DeleteMapping("/api/v1/menu-items/{id}")
-    public ResponseEntity<Void> delete(@PathVariable UUID id) {
-        deleteUseCase.execute(id);
+    public ResponseEntity<Void> delete(
+            @PathVariable UUID id,
+            @RequestHeader(value = "X-User-Id", required = false) UUID userId) {
+        deleteUseCase.execute(id, userId);
         return ResponseEntity.noContent().build();
     }
 }

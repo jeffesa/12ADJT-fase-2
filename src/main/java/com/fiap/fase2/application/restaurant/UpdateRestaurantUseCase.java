@@ -20,9 +20,13 @@ public class UpdateRestaurantUseCase {
     }
 
     public Restaurant execute(UUID id, String name, String address, String cuisineType,
-                              LocalDateTime openingHours, LocalDateTime closingTime, UUID ownerId) {
+                              LocalDateTime openingHours, LocalDateTime closingTime, UUID ownerId, UUID userId) {
         Restaurant existing = restaurantGateway.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Restaurante não encontrado com id: " + id));
+
+        if (userId != null && !userId.equals(existing.getOwnerId())) {
+            throw new BusinessException("Somente o proprietário pode alterar este restaurante");
+        }
 
         if (ownerId != null && !ownerId.equals(existing.getOwnerId())) {
             User newOwner = userGateway.findById(ownerId)
@@ -58,6 +62,6 @@ public class UpdateRestaurantUseCase {
     public Restaurant execute(Restaurant restaurant) {
         return execute(restaurant.getId(), restaurant.getName(), restaurant.getAddress(),
                 restaurant.getCuisineType(), restaurant.getOpeningHours(),
-                restaurant.getClosingTime(), restaurant.getOwnerId());
+                restaurant.getClosingTime(), restaurant.getOwnerId(), null);
     }
 }

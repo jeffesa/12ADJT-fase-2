@@ -157,7 +157,7 @@ class RestaurantControllerTest {
         Restaurant updated = new Restaurant(id, "Novo", "Addr", "ITALIANA",
                 request.openingHours(), request.closingTime(), UUID.randomUUID());
 
-        when(updateRestaurantUseCase.execute(any(UUID.class), any(), any(), any(), any(), any(), any()))
+        when(updateRestaurantUseCase.execute(any(UUID.class), any(), any(), any(), any(), any(), any(), any()))
                 .thenReturn(updated);
 
         mockMvc.perform(put("/api/v1/restaurants/" + id)

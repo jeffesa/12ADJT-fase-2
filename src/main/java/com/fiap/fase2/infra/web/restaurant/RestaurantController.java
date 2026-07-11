@@ -50,10 +50,13 @@ public class RestaurantController {
                     @ApiResponse(responseCode = "422", description = "Erro de validação")
             })
     @PostMapping
-    public ResponseEntity<RestaurantResponse> createRestaurant(@Valid @RequestBody RestaurantRequest request) {
+    public ResponseEntity<RestaurantResponse> createRestaurant(
+            @RequestHeader(value = "X-User-Id", required = false) UUID userId,
+            @Valid @RequestBody RestaurantRequest request) {
+        UUID ownerId = userId != null ? userId : request.ownerId();
         Restaurant created = createRestaurantUseCase.execute(
                 request.name(), request.address(), request.cuisineType(),
-                request.openingHours(), request.closingTime(), request.ownerId()
+                request.openingHours(), request.closingTime(), ownerId
         );
         RestaurantResponse response = RestaurantResponse.fromDomain(created);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
@@ -67,8 +70,10 @@ public class RestaurantController {
                     @ApiResponse(responseCode = "404", description = "Restaurante não encontrado")
             })
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteRestaurant(@PathVariable UUID id) {
-        deleteRestaurantUseCase.execute(id);
+    public ResponseEntity<Void> deleteRestaurant(
+            @PathVariable UUID id,
+            @RequestHeader(value = "X-User-Id", required = false) UUID userId) {
+        deleteRestaurantUseCase.execute(id, userId);
         return ResponseEntity.noContent().build();
     }
 
@@ -102,10 +107,12 @@ public class RestaurantController {
                     @ApiResponse(responseCode = "422", description = "Erro de validação")
             })
     @PutMapping("/{id}")
-    public ResponseEntity<RestaurantResponse> updateRestaurant(@PathVariable UUID id,
-                                                               @Valid @RequestBody RestaurantUpdateRequest request) {
+    public ResponseEntity<RestaurantResponse> updateRestaurant(
+            @PathVariable UUID id,
+            @RequestHeader(value = "X-User-Id", required = false) UUID userId,
+            @Valid @RequestBody RestaurantUpdateRequest request) {
         Restaurant updated = updateRestaurantUseCase.execute(id, request.name(), request.address(),
-                request.cuisineType(), request.openingHours(), request.closingTime(), request.ownerId());
+                request.cuisineType(), request.openingHours(), request.closingTime(), request.ownerId(), userId);
         return ResponseEntity.ok(RestaurantResponse.fromDomain(updated));
     }
 }

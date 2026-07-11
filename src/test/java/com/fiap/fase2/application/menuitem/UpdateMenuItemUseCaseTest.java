@@ -23,11 +23,12 @@ import static org.mockito.Mockito.*;
 class UpdateMenuItemUseCaseTest {
 
     @Mock private MenuItemGateway menuItemGateway;
+    @Mock private com.fiap.fase2.domain.restaurant.RestaurantGateway restaurantGateway;
     private UpdateMenuItemUseCase useCase;
 
     @BeforeEach
     void setUp() {
-        useCase = new UpdateMenuItemUseCase(menuItemGateway);
+        useCase = new UpdateMenuItemUseCase(menuItemGateway, restaurantGateway);
     }
 
     @Test
