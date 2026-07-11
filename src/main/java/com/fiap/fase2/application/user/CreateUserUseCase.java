@@ -3,6 +3,7 @@ package com.fiap.fase2.application.user;
 import com.fiap.fase2.domain.shared.BusinessException;
 import com.fiap.fase2.domain.shared.EntityNotFoundException;
 import com.fiap.fase2.domain.user.PasswordHasher;
+import com.fiap.fase2.domain.user.PasswordValidator;
 import com.fiap.fase2.domain.user.User;
 import com.fiap.fase2.domain.user.UserGateway;
 import com.fiap.fase2.domain.usertype.UserType;
@@ -26,6 +27,8 @@ public class CreateUserUseCase {
 
     public User execute(String name, String email, String login, String password,
                         String address, UUID userTypeId) {
+        PasswordValidator.validate(password);
+
         userGateway.findByEmail(email).ifPresent(u -> {
             throw new BusinessException("Email já cadastrado: " + email);
         });

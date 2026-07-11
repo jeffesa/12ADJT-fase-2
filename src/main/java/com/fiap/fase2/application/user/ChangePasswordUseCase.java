@@ -1,7 +1,9 @@
 package com.fiap.fase2.application.user;
 
+import com.fiap.fase2.domain.shared.BusinessException;
 import com.fiap.fase2.domain.shared.EntityNotFoundException;
 import com.fiap.fase2.domain.user.PasswordHasher;
+import com.fiap.fase2.domain.user.PasswordValidator;
 import com.fiap.fase2.domain.user.User;
 import com.fiap.fase2.domain.user.UserGateway;
 
@@ -23,8 +25,10 @@ public class ChangePasswordUseCase {
                 .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado com id: " + id));
 
         if (!passwordHasher.matches(currentPassword, user.getPassword())) {
-            throw new IllegalArgumentException("Senha atual incorreta");
+            throw new BusinessException("Senha atual incorreta");
         }
+
+        PasswordValidator.validate(newPassword);
 
         user.setPassword(passwordHasher.encode(newPassword));
         user.setLastModifiedDate(LocalDateTime.now());

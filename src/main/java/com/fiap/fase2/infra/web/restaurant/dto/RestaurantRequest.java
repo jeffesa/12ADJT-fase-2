@@ -14,6 +14,7 @@ public record RestaurantRequest(
         @Schema(description = "Nome do restaurante", example = "Restaurante Saboroso")
         String name,
 
+        @Size(max = 255, message = "O endereço deve ter no máximo 255 caracteres")
         @Schema(description = "Endereço do restaurante", example = "Av. Paulista, 1000")
         String address,
 

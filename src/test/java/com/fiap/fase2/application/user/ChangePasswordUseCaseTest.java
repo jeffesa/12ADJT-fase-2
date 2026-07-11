@@ -1,5 +1,6 @@
 package com.fiap.fase2.application.user;
 
+import com.fiap.fase2.domain.shared.BusinessException;
 import com.fiap.fase2.domain.shared.EntityNotFoundException;
 import com.fiap.fase2.domain.user.User;
 import com.fiap.fase2.domain.user.UserGateway;
@@ -58,7 +59,7 @@ class ChangePasswordUseCaseTest {
         when(userGateway.findById(id)).thenReturn(Optional.of(user));
         when(passwordHasher.matches("errada", "hash")).thenReturn(false);
 
-        assertThrows(IllegalArgumentException.class, () -> useCase.execute(id, "errada", "Nova123"));
+        assertThrows(BusinessException.class, () -> useCase.execute(id, "errada", "Nova123"));
         verify(userGateway, never()).update(any());
     }
 

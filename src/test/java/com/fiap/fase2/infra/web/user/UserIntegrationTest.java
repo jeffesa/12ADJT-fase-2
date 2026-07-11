@@ -217,8 +217,8 @@ class UserIntegrationTest {
 
     @Test
     @Order(22)
-    @DisplayName("PATCH - Deve retornar 400 com senha atual incorreta")
-    void shouldReturn400WrongCurrentPassword() throws Exception {
+    @DisplayName("PATCH - Deve retornar 422 com senha atual incorreta")
+    void shouldReturn422WrongCurrentPassword() throws Exception {
         // Buscar o ID da Maria criada no teste 20
         MvcResult result = mockMvc.perform(get(USERS_URL).param("name", "Maria"))
                 .andReturn();
@@ -229,6 +229,6 @@ class UserIntegrationTest {
         mockMvc.perform(patch(USERS_URL + "/" + mariaId + "/password")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isUnprocessableEntity());
     }
 }
