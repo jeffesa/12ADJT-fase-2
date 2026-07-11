@@ -15,13 +15,13 @@ public class MenuItemBeanConfig {
     }
 
     @Bean
-    public UpdateMenuItemUseCase updateMenuItemUseCase(MenuItemGateway menuItemGateway) {
-        return new UpdateMenuItemUseCase(menuItemGateway);
+    public UpdateMenuItemUseCase updateMenuItemUseCase(MenuItemGateway menuItemGateway, RestaurantGateway restaurantGateway) {
+        return new UpdateMenuItemUseCase(menuItemGateway, restaurantGateway);
     }
 
     @Bean
-    public DeleteMenuItemUseCase deleteMenuItemUseCase(MenuItemGateway menuItemGateway) {
-        return new DeleteMenuItemUseCase(menuItemGateway);
+    public DeleteMenuItemUseCase deleteMenuItemUseCase(MenuItemGateway menuItemGateway, RestaurantGateway restaurantGateway) {
+        return new DeleteMenuItemUseCase(menuItemGateway, restaurantGateway);
     }
 
     @Bean

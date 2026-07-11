@@ -56,4 +56,34 @@ class CreateMenuItemUseCaseTest {
                 useCase.execute("Pizza", "desc", BigDecimal.TEN, false, null, restaurantId));
         verify(menuItemGateway, never()).create(any());
     }
+
+    @Test
+    @DisplayName("Deve criar item quando userId é o dono do restaurante")
+    void shouldCreateWhenUserIsOwner() {
+        UUID restaurantId = UUID.randomUUID();
+        UUID ownerId = UUID.randomUUID();
+        Restaurant restaurant = new Restaurant(restaurantId, "Test", "Addr", "ITALIANA",
+                java.time.LocalDateTime.now(), java.time.LocalDateTime.now(), ownerId);
+        when(restaurantGateway.findById(restaurantId)).thenReturn(Optional.of(restaurant));
+        when(menuItemGateway.create(any(MenuItem.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        MenuItem result = useCase.execute("Pizza", "desc", BigDecimal.TEN, false, null, restaurantId, ownerId);
+        assertNotNull(result);
+    }
+
+    @Test
+    @DisplayName("Deve lançar exceção quando userId não é o dono do restaurante")
+    void shouldThrowWhenUserIsNotOwner() {
+        UUID restaurantId = UUID.randomUUID();
+        UUID ownerId = UUID.randomUUID();
+        UUID otherUser = UUID.randomUUID();
+        Restaurant restaurant = new Restaurant(restaurantId, "Test", "Addr", "ITALIANA",
+                java.time.LocalDateTime.now(), java.time.LocalDateTime.now(), ownerId);
+        when(restaurantGateway.findById(restaurantId)).thenReturn(Optional.of(restaurant));
+
+        assertThrows(com.fiap.fase2.domain.shared.BusinessException.class, () -> {
+            useCase.execute("Pizza", "desc", BigDecimal.TEN, false, null, restaurantId, otherUser);
+        });
+        verify(menuItemGateway, never()).create(any());
+    }
 }
