@@ -19,6 +19,15 @@ public class UpdateRestaurantUseCase {
         this.userGateway = userGateway;
     }
 
+    public void validateOwnership(UUID restaurantId, UUID userId) {
+        if (userId == null) return;
+        Restaurant existing = restaurantGateway.findById(restaurantId)
+                .orElseThrow(() -> new EntityNotFoundException("Restaurante não encontrado com id: " + restaurantId));
+        if (!userId.equals(existing.getOwnerId())) {
+            throw new BusinessException("Somente o proprietário pode alterar este restaurante");
+        }
+    }
+
     public Restaurant execute(UUID id, String name, String address, String cuisineType,
                               LocalDateTime openingHours, LocalDateTime closingTime, UUID ownerId) {
         Restaurant existing = restaurantGateway.findById(id)
@@ -27,30 +36,17 @@ public class UpdateRestaurantUseCase {
         if (ownerId != null && !ownerId.equals(existing.getOwnerId())) {
             User newOwner = userGateway.findById(ownerId)
                     .orElseThrow(() -> new BusinessException("Usuário proprietário não encontrado"));
-
             if (newOwner.getUserType() == null || !"RESTAURANT_OWNER".equals(newOwner.getUserType().getName())) {
                 throw new BusinessException("Usuário não tem permissão para ser proprietário (deve ser RESTAURANT_OWNER)");
             }
         }
 
-        if (name != null) {
-            existing.setName(name);
-        }
-        if (address != null) {
-            existing.setAddress(address);
-        }
-        if (cuisineType != null) {
-            existing.setCuisineType(cuisineType);
-        }
-        if (openingHours != null) {
-            existing.setOpeningHours(openingHours);
-        }
-        if (closingTime != null) {
-            existing.setClosingTime(closingTime);
-        }
-        if (ownerId != null) {
-            existing.setOwnerId(ownerId);
-        }
+        if (name != null) existing.setName(name);
+        if (address != null) existing.setAddress(address);
+        if (cuisineType != null) existing.setCuisineType(cuisineType);
+        if (openingHours != null) existing.setOpeningHours(openingHours);
+        if (closingTime != null) existing.setClosingTime(closingTime);
+        if (ownerId != null) existing.setOwnerId(ownerId);
 
         return restaurantGateway.update(existing);
     }

@@ -23,11 +23,12 @@ import static org.mockito.Mockito.*;
 class UpdateMenuItemUseCaseTest {
 
     @Mock private MenuItemGateway menuItemGateway;
+    @Mock private com.fiap.fase2.domain.restaurant.RestaurantGateway restaurantGateway;
     private UpdateMenuItemUseCase useCase;
 
     @BeforeEach
     void setUp() {
-        useCase = new UpdateMenuItemUseCase(menuItemGateway);
+        useCase = new UpdateMenuItemUseCase(menuItemGateway, restaurantGateway);
     }
 
     @Test
@@ -79,5 +80,43 @@ class UpdateMenuItemUseCaseTest {
             useCase.execute(id, "Pizza", "desc", new BigDecimal("-5.00"), false, null);
         });
         assertTrue(ex.getMessage().contains("maior que zero"));
+    }
+
+    @Test
+    @DisplayName("Deve lançar exceção quando userId não é o dono do restaurante")
+    void shouldThrowWhenUserIsNotRestaurantOwner() {
+        UUID id = UUID.randomUUID();
+        UUID restaurantId = UUID.randomUUID();
+        UUID ownerId = UUID.randomUUID();
+        UUID otherUser = UUID.randomUUID();
+        MenuItem existing = new MenuItem(id, "Pizza", "desc", BigDecimal.TEN, false, null, restaurantId);
+        com.fiap.fase2.domain.restaurant.Restaurant restaurant = new com.fiap.fase2.domain.restaurant.Restaurant(
+                restaurantId, "Test", "Addr", "ITALIANA",
+                java.time.LocalDateTime.now(), java.time.LocalDateTime.now(), ownerId);
+        when(menuItemGateway.findById(id)).thenReturn(Optional.of(existing));
+        when(restaurantGateway.findById(restaurantId)).thenReturn(Optional.of(restaurant));
+
+        assertThrows(BusinessException.class, () -> {
+            useCase.execute(id, "Sushi", "desc", new BigDecimal("45.00"), true, null, otherUser);
+        });
+        verify(menuItemGateway, never()).update(any());
+    }
+
+    @Test
+    @DisplayName("Deve atualizar quando userId é o dono")
+    void shouldUpdateWhenUserIsOwner() {
+        UUID id = UUID.randomUUID();
+        UUID restaurantId = UUID.randomUUID();
+        UUID ownerId = UUID.randomUUID();
+        MenuItem existing = new MenuItem(id, "Pizza", "desc", BigDecimal.TEN, false, null, restaurantId);
+        com.fiap.fase2.domain.restaurant.Restaurant restaurant = new com.fiap.fase2.domain.restaurant.Restaurant(
+                restaurantId, "Test", "Addr", "ITALIANA",
+                java.time.LocalDateTime.now(), java.time.LocalDateTime.now(), ownerId);
+        when(menuItemGateway.findById(id)).thenReturn(Optional.of(existing));
+        when(restaurantGateway.findById(restaurantId)).thenReturn(Optional.of(restaurant));
+        when(menuItemGateway.update(any(MenuItem.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        MenuItem result = useCase.execute(id, "Sushi", "desc", new BigDecimal("45.00"), true, null, ownerId);
+        assertEquals("Sushi", result.getName());
     }
 }

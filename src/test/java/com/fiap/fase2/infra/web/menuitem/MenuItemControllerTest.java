@@ -46,7 +46,7 @@ class MenuItemControllerTest {
     @DisplayName("POST - deve criar e retornar 201")
     void shouldCreate() throws Exception {
         UUID restaurantId = UUID.randomUUID();
-        when(createUseCase.execute(any(), any(), any(), anyBoolean(), any(), eq(restaurantId)))
+        when(createUseCase.execute(any(), any(), any(), anyBoolean(), any(), eq(restaurantId), any()))
                 .thenReturn(buildItem());
 
         MenuItemRequest request = new MenuItemRequest("Pizza", "Margherita", new BigDecimal("39.90"), false, "/img/pizza.jpg");
@@ -95,7 +95,7 @@ class MenuItemControllerTest {
     @DisplayName("PUT - deve atualizar")
     void shouldUpdate() throws Exception {
         UUID id = UUID.randomUUID();
-        when(updateUseCase.execute(eq(id), any(), any(), any(), anyBoolean(), any()))
+        when(updateUseCase.execute(eq(id), any(), any(), any(), anyBoolean(), any(), any()))
                 .thenReturn(buildItem());
 
         MenuItemRequest request = new MenuItemRequest("Sushi", "Salmão", new BigDecimal("45.00"), true, null);
@@ -155,7 +155,7 @@ class MenuItemControllerTest {
     @DisplayName("POST - deve retornar 404 com restaurante inexistente")
     void shouldReturn404WhenRestaurantNotFound() throws Exception {
         UUID restaurantId = UUID.randomUUID();
-        when(createUseCase.execute(any(), any(), any(), anyBoolean(), any(), eq(restaurantId)))
+        when(createUseCase.execute(any(), any(), any(), anyBoolean(), any(), eq(restaurantId), any()))
                 .thenThrow(new EntityNotFoundException("Restaurante não encontrado"));
 
         MenuItemRequest request = new MenuItemRequest("Pizza", "desc", new BigDecimal("39.90"), false, null);
@@ -170,7 +170,7 @@ class MenuItemControllerTest {
     @DisplayName("DELETE - deve retornar 404 com ID inexistente")
     void shouldReturn404WhenDeleteNotFound() throws Exception {
         UUID id = UUID.randomUUID();
-        doThrow(new EntityNotFoundException("Não encontrado")).when(deleteUseCase).execute(id);
+        doThrow(new EntityNotFoundException("Não encontrado")).when(deleteUseCase).execute(eq(id), any());
 
         mockMvc.perform(delete("/api/v1/menu-items/" + id))
                 .andExpect(status().isNotFound());

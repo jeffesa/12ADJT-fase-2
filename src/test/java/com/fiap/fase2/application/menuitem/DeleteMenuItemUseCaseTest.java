@@ -21,11 +21,12 @@ import static org.mockito.Mockito.*;
 class DeleteMenuItemUseCaseTest {
 
     @Mock private MenuItemGateway menuItemGateway;
+    @Mock private com.fiap.fase2.domain.restaurant.RestaurantGateway restaurantGateway;
     private DeleteMenuItemUseCase useCase;
 
     @BeforeEach
     void setUp() {
-        useCase = new DeleteMenuItemUseCase(menuItemGateway);
+        useCase = new DeleteMenuItemUseCase(menuItemGateway, restaurantGateway);
     }
 
     @Test
