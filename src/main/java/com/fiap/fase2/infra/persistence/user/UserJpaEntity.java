@@ -39,7 +39,7 @@ public class UserJpaEntity {
     }
 
     public UserJpaEntity(UUID id, String name, String email, String login, String password,
-                         String address, LocalDateTime lastModifiedDate, UserTypeJpaEntity userType) {
+                         String address, LocalDateTime lastModifiedDate) {
         this.id = id;
         this.name = name;
         this.email = email;
@@ -47,6 +47,11 @@ public class UserJpaEntity {
         this.password = password;
         this.address = address;
         this.lastModifiedDate = lastModifiedDate;
+    }
+
+    public UserJpaEntity(UUID id, String name, String email, String login, String password,
+                         String address, LocalDateTime lastModifiedDate, UserTypeJpaEntity userType) {
+        this(id, name, email, login, password, address, lastModifiedDate);
         this.userType = userType;
     }
 

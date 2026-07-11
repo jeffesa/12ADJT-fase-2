@@ -62,8 +62,10 @@ class UpdateMenuItemUseCaseTest {
         MenuItem existing = new MenuItem(id, "Pizza", "desc", BigDecimal.TEN, false, null, UUID.randomUUID());
         when(menuItemGateway.findById(id)).thenReturn(Optional.of(existing));
 
-        assertThrows(BusinessException.class, () ->
-                useCase.execute(id, "Pizza", "desc", BigDecimal.ZERO, false, null));
+        BusinessException ex = assertThrows(BusinessException.class, () -> {
+            useCase.execute(id, "Pizza", "desc", BigDecimal.ZERO, false, null);
+        });
+        assertTrue(ex.getMessage().contains("maior que zero"));
     }
 
     @Test
@@ -73,7 +75,9 @@ class UpdateMenuItemUseCaseTest {
         MenuItem existing = new MenuItem(id, "Pizza", "desc", BigDecimal.TEN, false, null, UUID.randomUUID());
         when(menuItemGateway.findById(id)).thenReturn(Optional.of(existing));
 
-        assertThrows(BusinessException.class, () ->
-                useCase.execute(id, "Pizza", "desc", new BigDecimal("-5.00"), false, null));
+        BusinessException ex = assertThrows(BusinessException.class, () -> {
+            useCase.execute(id, "Pizza", "desc", new BigDecimal("-5.00"), false, null);
+        });
+        assertTrue(ex.getMessage().contains("maior que zero"));
     }
 }
