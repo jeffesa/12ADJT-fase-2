@@ -28,6 +28,14 @@
     {
       "key": "menuItemId",
       "value": ""
+    },
+    {
+      "key": "restaurantOwnerTypeId",
+      "value": ""
+    },
+    {
+      "key": "ownerUserId",
+      "value": ""
     }
   ],
   "item": [
@@ -58,6 +66,217 @@
               "request": {
                 "method": "GET",
                 "url": "{{localUrl}}/actuator/health"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Setup",
+          "item": [
+            {
+              "name": "Criar Tipo - CUSTOMER ✅ 201",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is 201', function () {",
+                      "    pm.response.to.have.status(201);",
+                      "});",
+                      "pm.test('Save userTypeId', function () {",
+                      "    var json = pm.response.json();",
+                      "    pm.collectionVariables.set('userTypeId', json.id);",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "url": "{{localUrl}}/api/v1/user-types",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"CUSTOMER\"\n}"
+                }
+              }
+            },
+            {
+              "name": "Criar Tipo - RESTAURANT_OWNER ✅ 201",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is 201', function () {",
+                      "    pm.response.to.have.status(201);",
+                      "});",
+                      "pm.test('Save restaurantOwnerTypeId', function () {",
+                      "    var json = pm.response.json();",
+                      "    pm.collectionVariables.set('restaurantOwnerTypeId', json.id);",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "url": "{{localUrl}}/api/v1/user-types",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"RESTAURANT_OWNER\"\n}"
+                }
+              }
+            },
+            {
+              "name": "Criar Usuário CUSTOMER ✅ 201",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is 201', function () {",
+                      "    pm.response.to.have.status(201);",
+                      "});",
+                      "pm.test('Save userId', function () {",
+                      "    var json = pm.response.json();",
+                      "    pm.collectionVariables.set('userId', json.id);",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "url": "{{localUrl}}/api/v1/users",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"João Silva\",\n  \"email\": \"joao@email.com\",\n  \"login\": \"joaosilva\",\n  \"password\": \"Senha123\",\n  \"address\": \"Rua das Flores, 123\",\n  \"userTypeId\": \"{{userTypeId}}\"\n}"
+                }
+              }
+            },
+            {
+              "name": "Criar Usuário RESTAURANT_OWNER ✅ 201",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is 201', function () {",
+                      "    pm.response.to.have.status(201);",
+                      "});",
+                      "pm.test('Save ownerUserId', function () {",
+                      "    var json = pm.response.json();",
+                      "    pm.collectionVariables.set('ownerUserId', json.id);",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "url": "{{localUrl}}/api/v1/users",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Owner Teste\",\n  \"email\": \"owner@email.com\",\n  \"login\": \"ownerteste\",\n  \"password\": \"Senha123\",\n  \"address\": \"Rua Owner, 1\",\n  \"userTypeId\": \"{{restaurantOwnerTypeId}}\"\n}"
+                }
+              }
+            },
+            {
+              "name": "Criar Restaurante ✅ 201",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is 201', function () {",
+                      "    pm.response.to.have.status(201);",
+                      "});",
+                      "pm.test('Save restaurantId', function () {",
+                      "    var json = pm.response.json();",
+                      "    pm.collectionVariables.set('restaurantId', json.id);",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "url": "{{localUrl}}/api/v1/restaurants",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "X-User-Id",
+                    "value": "{{ownerUserId}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Restaurante Setup\",\n  \"address\": \"Rua Setup, 1\",\n  \"cuisineType\": \"ITALIANA\",\n  \"openingHours\": \"2024-01-01T11:00:00\",\n  \"closingTime\": \"2024-01-01T23:00:00\",\n  \"ownerId\": \"{{ownerUserId}}\"\n}"
+                }
+              }
+            },
+            {
+              "name": "Criar Item Cardápio ✅ 201",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is 201', function () {",
+                      "    pm.response.to.have.status(201);",
+                      "});",
+                      "pm.test('Save menuItemId', function () {",
+                      "    var json = pm.response.json();",
+                      "    pm.collectionVariables.set('menuItemId', json.id);",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "url": "{{localUrl}}/api/v1/restaurants/{{restaurantId}}/menu-items",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "X-User-Id",
+                    "value": "{{ownerUserId}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Pizza Margherita\",\n  \"description\": \"Molho e mussarela\",\n  \"price\": 39.90,\n  \"dineInOnly\": false\n}"
+                }
               }
             }
           ]
@@ -364,25 +583,6 @@
               }
             },
             {
-              "name": "Deletar Tipo ✅ 204",
-              "event": [
-                {
-                  "listen": "test",
-                  "script": {
-                    "exec": [
-                      "pm.test('Status code is 204', function () {",
-                      "    pm.response.to.have.status(204);",
-                      "});"
-                    ]
-                  }
-                }
-              ],
-              "request": {
-                "method": "DELETE",
-                "url": "{{localUrl}}/api/v1/user-types/{{userTypeId}}"
-              }
-            },
-            {
               "name": "Deletar Tipo - ID inexistente ❌ 404",
               "event": [
                 {
@@ -406,40 +606,6 @@
         {
           "name": "Usuários",
           "item": [
-            {
-              "name": "Criar Tipo para Usuário ✅ 201",
-              "event": [
-                {
-                  "listen": "test",
-                  "script": {
-                    "exec": [
-                      "pm.test('Status code is 201', function () {",
-                      "    pm.response.to.have.status(201);",
-                      "});",
-                      "pm.test('Save userTypeId', function () {",
-                      "    var json = pm.response.json();",
-                      "    pm.expect(json.id).to.not.be.undefined;",
-                      "    pm.collectionVariables.set('userTypeId', json.id);",
-                      "});"
-                    ]
-                  }
-                }
-              ],
-              "request": {
-                "method": "POST",
-                "url": "{{localUrl}}/api/v1/user-types",
-                "header": [
-                  {
-                    "key": "Content-Type",
-                    "value": "application/json"
-                  }
-                ],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n  \"name\": \"CUSTOMER\"\n}"
-                }
-              }
-            },
             {
               "name": "Criar Usuário (CUSTOMER) ✅ 201",
               "event": [
@@ -660,25 +826,6 @@
               }
             },
             {
-              "name": "Deletar Usuário ✅ 204",
-              "event": [
-                {
-                  "listen": "test",
-                  "script": {
-                    "exec": [
-                      "pm.test('Status code is 204', function () {",
-                      "    pm.response.to.have.status(204);",
-                      "});"
-                    ]
-                  }
-                }
-              ],
-              "request": {
-                "method": "DELETE",
-                "url": "{{localUrl}}/api/v1/users/{{userId}}"
-              }
-            },
-            {
               "name": "Deletar Usuário - ID inexistente ❌ 404",
               "event": [
                 {
@@ -696,58 +843,16 @@
                 "method": "DELETE",
                 "url": "{{localUrl}}/api/v1/users/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
               }
-            }
-          ]
-        },
-        {
-          "name": "Autenticação",
-          "item": [
-            {
-              "name": "Criar Tipo para Auth ✅ 201",
-              "event": [
-                {
-                  "listen": "test",
-                  "script": {
-                    "exec": [
-                      "pm.test('Status code is 201', function () {",
-                      "    pm.response.to.have.status(201);",
-                      "});",
-                      "pm.test('Save userTypeId', function () {",
-                      "    var json = pm.response.json();",
-                      "    pm.collectionVariables.set('userTypeId', json.id);",
-                      "});"
-                    ]
-                  }
-                }
-              ],
-              "request": {
-                "method": "POST",
-                "url": "{{localUrl}}/api/v1/user-types",
-                "header": [
-                  {
-                    "key": "Content-Type",
-                    "value": "application/json"
-                  }
-                ],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n  \"name\": \"AUTH_TYPE\"\n}"
-                }
-              }
             },
             {
-              "name": "Criar Usuário para Auth ✅ 201",
+              "name": "Criar Usuário - Senha curta ❌ 422",
               "event": [
                 {
                   "listen": "test",
                   "script": {
                     "exec": [
-                      "pm.test('Status code is 201', function () {",
-                      "    pm.response.to.have.status(201);",
-                      "});",
-                      "pm.test('Save userId', function () {",
-                      "    var json = pm.response.json();",
-                      "    pm.collectionVariables.set('userId', json.id);",
+                      "pm.test('Status code is 422', function () {",
+                      "    pm.response.to.have.status(422);",
                       "});"
                     ]
                   }
@@ -764,10 +869,102 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"name\": \"Auth User\",\n  \"email\": \"auth@email.com\",\n  \"login\": \"authuser\",\n  \"password\": \"Senha123\",\n  \"address\": \"Rua Auth, 1\",\n  \"userTypeId\": \"{{userTypeId}}\"\n}"
+                  "raw": "{\n  \"name\": \"Teste\",\n  \"email\": \"curta@email.com\",\n  \"login\": \"curta\",\n  \"password\": \"Ab1\",\n  \"address\": \"Rua X\",\n  \"userTypeId\": \"{{userTypeId}}\"\n}"
                 }
               }
             },
+            {
+              "name": "Criar Usuário - Senha sem maiúscula ❌ 422",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is 422', function () {",
+                      "    pm.response.to.have.status(422);",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "url": "{{localUrl}}/api/v1/users",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Teste\",\n  \"email\": \"semmai@email.com\",\n  \"login\": \"semmai\",\n  \"password\": \"senha123abc\",\n  \"address\": \"Rua X\",\n  \"userTypeId\": \"{{userTypeId}}\"\n}"
+                }
+              }
+            },
+            {
+              "name": "Criar Usuário - Senha sem minúscula ❌ 422",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is 422', function () {",
+                      "    pm.response.to.have.status(422);",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "url": "{{localUrl}}/api/v1/users",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Teste\",\n  \"email\": \"semmin@email.com\",\n  \"login\": \"semmin\",\n  \"password\": \"SENHA123ABC\",\n  \"address\": \"Rua X\",\n  \"userTypeId\": \"{{userTypeId}}\"\n}"
+                }
+              }
+            },
+            {
+              "name": "Criar Usuário - Senha sem número ❌ 422",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is 422', function () {",
+                      "    pm.response.to.have.status(422);",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "url": "{{localUrl}}/api/v1/users",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Teste\",\n  \"email\": \"semnum@email.com\",\n  \"login\": \"semnum\",\n  \"password\": \"SenhaForte\",\n  \"address\": \"Rua X\",\n  \"userTypeId\": \"{{userTypeId}}\"\n}"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Autenticação",
+          "item": [
             {
               "name": "Login ✅ 200",
               "event": [
@@ -928,72 +1125,6 @@
           "name": "Restaurantes",
           "item": [
             {
-              "name": "Criar Tipo RESTAURANT_OWNER ✅ 201",
-              "event": [
-                {
-                  "listen": "test",
-                  "script": {
-                    "exec": [
-                      "pm.test('Status code is 201', function () {",
-                      "    pm.response.to.have.status(201);",
-                      "});",
-                      "pm.test('Save userTypeId', function () {",
-                      "    var json = pm.response.json();",
-                      "    pm.collectionVariables.set('userTypeId', json.id);",
-                      "});"
-                    ]
-                  }
-                }
-              ],
-              "request": {
-                "method": "POST",
-                "url": "{{localUrl}}/api/v1/user-types",
-                "header": [
-                  {
-                    "key": "Content-Type",
-                    "value": "application/json"
-                  }
-                ],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n  \"name\": \"REST_OWNER\"\n}"
-                }
-              }
-            },
-            {
-              "name": "Criar Owner para Restaurante ✅ 201",
-              "event": [
-                {
-                  "listen": "test",
-                  "script": {
-                    "exec": [
-                      "pm.test('Status code is 201', function () {",
-                      "    pm.response.to.have.status(201);",
-                      "});",
-                      "pm.test('Save userId', function () {",
-                      "    var json = pm.response.json();",
-                      "    pm.collectionVariables.set('userId', json.id);",
-                      "});"
-                    ]
-                  }
-                }
-              ],
-              "request": {
-                "method": "POST",
-                "url": "{{localUrl}}/api/v1/users",
-                "header": [
-                  {
-                    "key": "Content-Type",
-                    "value": "application/json"
-                  }
-                ],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n  \"name\": \"Owner Rest\",\n  \"email\": \"ownerrest@email.com\",\n  \"login\": \"ownerrest\",\n  \"password\": \"Senha123\",\n  \"address\": \"Rua Owner, 1\",\n  \"userTypeId\": \"{{userTypeId}}\"\n}"
-                }
-              }
-            },
-            {
               "name": "Criar Restaurante ✅ 201",
               "event": [
                 {
@@ -1020,6 +1151,10 @@
                   {
                     "key": "Content-Type",
                     "value": "application/json"
+                  },
+                  {
+                    "key": "X-User-Id",
+                    "value": "{{userId}}"
                   }
                 ],
                 "body": {
@@ -1053,6 +1188,10 @@
                   {
                     "key": "Content-Type",
                     "value": "application/json"
+                  },
+                  {
+                    "key": "X-User-Id",
+                    "value": "{{userId}}"
                   }
                 ],
                 "body": {
@@ -1082,6 +1221,10 @@
                   {
                     "key": "Content-Type",
                     "value": "application/json"
+                  },
+                  {
+                    "key": "X-User-Id",
+                    "value": "{{userId}}"
                   }
                 ],
                 "body": {
@@ -1111,7 +1254,13 @@
               ],
               "request": {
                 "method": "GET",
-                "url": "{{localUrl}}/api/v1/restaurants"
+                "url": "{{localUrl}}/api/v1/restaurants",
+                "header": [
+                  {
+                    "key": "X-User-Id",
+                    "value": "{{userId}}"
+                  }
+                ]
               }
             },
             {
@@ -1134,7 +1283,13 @@
               ],
               "request": {
                 "method": "GET",
-                "url": "{{localUrl}}/api/v1/restaurants/{{restaurantId}}"
+                "url": "{{localUrl}}/api/v1/restaurants/{{restaurantId}}",
+                "header": [
+                  {
+                    "key": "X-User-Id",
+                    "value": "{{userId}}"
+                  }
+                ]
               }
             },
             {
@@ -1153,7 +1308,13 @@
               ],
               "request": {
                 "method": "GET",
-                "url": "{{localUrl}}/api/v1/restaurants/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
+                "url": "{{localUrl}}/api/v1/restaurants/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
+                "header": [
+                  {
+                    "key": "X-User-Id",
+                    "value": "{{userId}}"
+                  }
+                ]
               }
             },
             {
@@ -1177,7 +1338,13 @@
               ],
               "request": {
                 "method": "GET",
-                "url": "{{localUrl}}/api/v1/restaurants?ownerId={{userId}}"
+                "url": "{{localUrl}}/api/v1/restaurants?ownerId={{userId}}",
+                "header": [
+                  {
+                    "key": "X-User-Id",
+                    "value": "{{userId}}"
+                  }
+                ]
               }
             },
             {
@@ -1205,6 +1372,10 @@
                   {
                     "key": "Content-Type",
                     "value": "application/json"
+                  },
+                  {
+                    "key": "X-User-Id",
+                    "value": "{{userId}}"
                   }
                 ],
                 "body": {
@@ -1234,6 +1405,10 @@
                   {
                     "key": "Content-Type",
                     "value": "application/json"
+                  },
+                  {
+                    "key": "X-User-Id",
+                    "value": "{{userId}}"
                   }
                 ],
                 "body": {
@@ -1243,14 +1418,51 @@
               }
             },
             {
-              "name": "Deletar Restaurante ✅ 204",
+              "name": "Atualizar Restaurante - Não é dono ❌ 422",
               "event": [
                 {
                   "listen": "test",
                   "script": {
                     "exec": [
-                      "pm.test('Status code is 204', function () {",
-                      "    pm.response.to.have.status(204);",
+                      "pm.test('Status code is 422', function () {",
+                      "    pm.response.to.have.status(422);",
+                      "});",
+                      "pm.test('Response has ownership error', function () {",
+                      "    var json = pm.response.json();",
+                      "    pm.expect(json.detail).to.include('proprietário');",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "PUT",
+                "url": "{{localUrl}}/api/v1/restaurants/{{restaurantId}}",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "X-User-Id",
+                    "value": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Tentativa Hack\",\n  \"address\": \"Rua Hack\",\n  \"cuisineType\": \"HACK\",\n  \"openingHours\": \"2024-01-01T08:00:00\",\n  \"closingTime\": \"2024-01-01T22:00:00\",\n  \"ownerId\": \"{{userId}}\"\n}"
+                }
+              }
+            },
+            {
+              "name": "Deletar Restaurante - Não é dono ❌ 422",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is 422', function () {",
+                      "    pm.response.to.have.status(422);",
                       "});"
                     ]
                   }
@@ -1258,7 +1470,13 @@
               ],
               "request": {
                 "method": "DELETE",
-                "url": "{{localUrl}}/api/v1/restaurants/{{restaurantId}}"
+                "url": "{{localUrl}}/api/v1/restaurants/{{restaurantId}}",
+                "header": [
+                  {
+                    "key": "X-User-Id",
+                    "value": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
+                  }
+                ]
               }
             },
             {
@@ -1277,7 +1495,13 @@
               ],
               "request": {
                 "method": "DELETE",
-                "url": "{{localUrl}}/api/v1/restaurants/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
+                "url": "{{localUrl}}/api/v1/restaurants/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
+                "header": [
+                  {
+                    "key": "X-User-Id",
+                    "value": "{{userId}}"
+                  }
+                ]
               }
             }
           ]
@@ -1285,106 +1509,6 @@
         {
           "name": "Cardápio (MenuItem)",
           "item": [
-            {
-              "name": "Criar Tipo para MenuItem ✅ 201",
-              "event": [
-                {
-                  "listen": "test",
-                  "script": {
-                    "exec": [
-                      "pm.test('Status code is 201', function () {",
-                      "    pm.response.to.have.status(201);",
-                      "});",
-                      "pm.test('Save userTypeId', function () {",
-                      "    var json = pm.response.json();",
-                      "    pm.collectionVariables.set('userTypeId', json.id);",
-                      "});"
-                    ]
-                  }
-                }
-              ],
-              "request": {
-                "method": "POST",
-                "url": "{{localUrl}}/api/v1/user-types",
-                "header": [
-                  {
-                    "key": "Content-Type",
-                    "value": "application/json"
-                  }
-                ],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n  \"name\": \"OWNER_MENU\"\n}"
-                }
-              }
-            },
-            {
-              "name": "Criar Usuário Owner ✅ 201",
-              "event": [
-                {
-                  "listen": "test",
-                  "script": {
-                    "exec": [
-                      "pm.test('Status code is 201', function () {",
-                      "    pm.response.to.have.status(201);",
-                      "});",
-                      "pm.test('Save userId', function () {",
-                      "    var json = pm.response.json();",
-                      "    pm.collectionVariables.set('userId', json.id);",
-                      "});"
-                    ]
-                  }
-                }
-              ],
-              "request": {
-                "method": "POST",
-                "url": "{{localUrl}}/api/v1/users",
-                "header": [
-                  {
-                    "key": "Content-Type",
-                    "value": "application/json"
-                  }
-                ],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n  \"name\": \"Owner Menu\",\n  \"email\": \"ownermenu@email.com\",\n  \"login\": \"ownermenu\",\n  \"password\": \"Senha123\",\n  \"address\": \"Rua Owner, 1\",\n  \"userTypeId\": \"{{userTypeId}}\"\n}"
-                }
-              }
-            },
-            {
-              "name": "Criar Restaurante para MenuItem ✅ 201",
-              "event": [
-                {
-                  "listen": "test",
-                  "script": {
-                    "exec": [
-                      "pm.test('Status code is 201', function () {",
-                      "    pm.response.to.have.status(201);",
-                      "});",
-                      "pm.test('Save restaurantId', function () {",
-                      "    var json = pm.response.json();",
-                      "    pm.expect(json.id).to.not.be.undefined;",
-                      "    pm.collectionVariables.set('restaurantId', json.id);",
-                      "});"
-                    ]
-                  }
-                }
-              ],
-              "request": {
-                "method": "POST",
-                "url": "{{localUrl}}/api/v1/restaurants",
-                "header": [
-                  {
-                    "key": "Content-Type",
-                    "value": "application/json"
-                  }
-                ],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n  \"name\": \"Restaurante Teste Menu\",\n  \"cuisineType\": \"ITALIANA\",\n  \"openingHours\": \"2026-01-01T08:00:00\",\n  \"closingTime\": \"2026-01-01T22:00:00\",\n  \"ownerId\": \"{{userId}}\"\n}"
-                }
-              }
-            },
             {
               "name": "Criar Item ✅ 201",
               "event": [
@@ -1412,6 +1536,10 @@
                   {
                     "key": "Content-Type",
                     "value": "application/json"
+                  },
+                  {
+                    "key": "X-User-Id",
+                    "value": "{{userId}}"
                   }
                 ],
                 "body": {
@@ -1441,6 +1569,10 @@
                   {
                     "key": "Content-Type",
                     "value": "application/json"
+                  },
+                  {
+                    "key": "X-User-Id",
+                    "value": "{{userId}}"
                   }
                 ],
                 "body": {
@@ -1470,6 +1602,10 @@
                   {
                     "key": "Content-Type",
                     "value": "application/json"
+                  },
+                  {
+                    "key": "X-User-Id",
+                    "value": "{{userId}}"
                   }
                 ],
                 "body": {
@@ -1499,7 +1635,13 @@
               ],
               "request": {
                 "method": "GET",
-                "url": "{{localUrl}}/api/v1/restaurants/{{restaurantId}}/menu-items"
+                "url": "{{localUrl}}/api/v1/restaurants/{{restaurantId}}/menu-items",
+                "header": [
+                  {
+                    "key": "X-User-Id",
+                    "value": "{{userId}}"
+                  }
+                ]
               }
             },
             {
@@ -1522,7 +1664,13 @@
               ],
               "request": {
                 "method": "GET",
-                "url": "{{localUrl}}/api/v1/menu-items/{{menuItemId}}"
+                "url": "{{localUrl}}/api/v1/menu-items/{{menuItemId}}",
+                "header": [
+                  {
+                    "key": "X-User-Id",
+                    "value": "{{userId}}"
+                  }
+                ]
               }
             },
             {
@@ -1541,7 +1689,13 @@
               ],
               "request": {
                 "method": "GET",
-                "url": "{{localUrl}}/api/v1/menu-items/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
+                "url": "{{localUrl}}/api/v1/menu-items/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
+                "header": [
+                  {
+                    "key": "X-User-Id",
+                    "value": "{{userId}}"
+                  }
+                ]
               }
             },
             {
@@ -1569,6 +1723,10 @@
                   {
                     "key": "Content-Type",
                     "value": "application/json"
+                  },
+                  {
+                    "key": "X-User-Id",
+                    "value": "{{userId}}"
                   }
                 ],
                 "body": {
@@ -1578,22 +1736,73 @@
               }
             },
             {
-              "name": "Deletar Item ✅ 204",
+              "name": "Criar Item - Não é dono do restaurante ❌ 422",
               "event": [
                 {
                   "listen": "test",
                   "script": {
                     "exec": [
-                      "pm.test('Status code is 204', function () {",
-                      "    pm.response.to.have.status(204);",
+                      "pm.test('Status code is 422', function () {",
+                      "    pm.response.to.have.status(422);",
+                      "});",
+                      "pm.test('Response has ownership error', function () {",
+                      "    var json = pm.response.json();",
+                      "    pm.expect(json.detail).to.include('proprietário');",
                       "});"
                     ]
                   }
                 }
               ],
               "request": {
-                "method": "DELETE",
-                "url": "{{localUrl}}/api/v1/menu-items/{{menuItemId}}"
+                "method": "POST",
+                "url": "{{localUrl}}/api/v1/restaurants/{{restaurantId}}/menu-items",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "X-User-Id",
+                    "value": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Item Hack\",\n  \"description\": \"Tentativa\",\n  \"price\": 10.00,\n  \"dineInOnly\": false\n}"
+                }
+              }
+            },
+            {
+              "name": "Atualizar Item - Preço negativo ❌ 422",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is 422', function () {",
+                      "    pm.response.to.have.status(422);",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "PUT",
+                "url": "{{localUrl}}/api/v1/menu-items/{{menuItemId}}",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "X-User-Id",
+                    "value": "{{userId}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Item\",\n  \"description\": \"desc\",\n  \"price\": -5.00,\n  \"dineInOnly\": false\n}"
+                }
               }
             },
             {
@@ -1612,7 +1821,232 @@
               ],
               "request": {
                 "method": "DELETE",
-                "url": "{{localUrl}}/api/v1/menu-items/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
+                "url": "{{localUrl}}/api/v1/menu-items/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
+                "header": [
+                  {
+                    "key": "X-User-Id",
+                    "value": "{{userId}}"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Limpeza (Delete)",
+          "item": [
+            {
+              "name": "Deletar Item Cardápio ✅ 204",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is 204', function () {",
+                      "    pm.response.to.have.status(204);",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "DELETE",
+                "url": "{{localUrl}}/api/v1/menu-items/{{menuItemId}}",
+                "header": [
+                  {
+                    "key": "X-User-Id",
+                    "value": "{{ownerUserId}}"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "Deletar Item - ID inexistente ❌ 404",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is 404', function () {",
+                      "    pm.response.to.have.status(404);",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "DELETE",
+                "url": "{{localUrl}}/api/v1/menu-items/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
+                "header": [
+                  {
+                    "key": "X-User-Id",
+                    "value": "{{ownerUserId}}"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "Deletar Restaurante ✅ 204",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is 204', function () {",
+                      "    pm.response.to.have.status(204);",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "DELETE",
+                "url": "{{localUrl}}/api/v1/restaurants/{{restaurantId}}",
+                "header": [
+                  {
+                    "key": "X-User-Id",
+                    "value": "{{ownerUserId}}"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "Deletar Restaurante - ID inexistente ❌ 404",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is 404', function () {",
+                      "    pm.response.to.have.status(404);",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "DELETE",
+                "url": "{{localUrl}}/api/v1/restaurants/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
+                "header": [
+                  {
+                    "key": "X-User-Id",
+                    "value": "{{ownerUserId}}"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "Deletar Usuário Owner ✅ 204",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is 204', function () {",
+                      "    pm.response.to.have.status(204);",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "DELETE",
+                "url": "{{localUrl}}/api/v1/users/{{ownerUserId}}"
+              }
+            },
+            {
+              "name": "Deletar Usuário Customer ✅ 204",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is 204', function () {",
+                      "    pm.response.to.have.status(204);",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "DELETE",
+                "url": "{{localUrl}}/api/v1/users/{{userId}}"
+              }
+            },
+            {
+              "name": "Deletar Usuário - ID inexistente ❌ 404",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is 404', function () {",
+                      "    pm.response.to.have.status(404);",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "DELETE",
+                "url": "{{localUrl}}/api/v1/users/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
+              }
+            },
+            {
+              "name": "Deletar Tipo RESTAURANT_OWNER ✅ 204",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is 204', function () {",
+                      "    pm.response.to.have.status(204);",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "DELETE",
+                "url": "{{localUrl}}/api/v1/user-types/{{restaurantOwnerTypeId}}"
+              }
+            },
+            {
+              "name": "Deletar Tipo CUSTOMER ✅ 204",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is 204', function () {",
+                      "    pm.response.to.have.status(204);",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "DELETE",
+                "url": "{{localUrl}}/api/v1/user-types/{{userTypeId}}"
+              }
+            },
+            {
+              "name": "Deletar Tipo - ID inexistente ❌ 404",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is 404', function () {",
+                      "    pm.response.to.have.status(404);",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "DELETE",
+                "url": "{{localUrl}}/api/v1/user-types/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
               }
             }
           ]
@@ -1646,6 +2080,217 @@
               "request": {
                 "method": "GET",
                 "url": "{{prodUrl}}/actuator/health"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Setup",
+          "item": [
+            {
+              "name": "Criar Tipo - CUSTOMER ✅ 201",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is 201', function () {",
+                      "    pm.response.to.have.status(201);",
+                      "});",
+                      "pm.test('Save userTypeId', function () {",
+                      "    var json = pm.response.json();",
+                      "    pm.collectionVariables.set('userTypeId', json.id);",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "url": "{{prodUrl}}/api/v1/user-types",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"CUSTOMER\"\n}"
+                }
+              }
+            },
+            {
+              "name": "Criar Tipo - RESTAURANT_OWNER ✅ 201",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is 201', function () {",
+                      "    pm.response.to.have.status(201);",
+                      "});",
+                      "pm.test('Save restaurantOwnerTypeId', function () {",
+                      "    var json = pm.response.json();",
+                      "    pm.collectionVariables.set('restaurantOwnerTypeId', json.id);",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "url": "{{prodUrl}}/api/v1/user-types",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"RESTAURANT_OWNER\"\n}"
+                }
+              }
+            },
+            {
+              "name": "Criar Usuário CUSTOMER ✅ 201",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is 201', function () {",
+                      "    pm.response.to.have.status(201);",
+                      "});",
+                      "pm.test('Save userId', function () {",
+                      "    var json = pm.response.json();",
+                      "    pm.collectionVariables.set('userId', json.id);",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "url": "{{prodUrl}}/api/v1/users",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"João Silva\",\n  \"email\": \"joao@email.com\",\n  \"login\": \"joaosilva\",\n  \"password\": \"Senha123\",\n  \"address\": \"Rua das Flores, 123\",\n  \"userTypeId\": \"{{userTypeId}}\"\n}"
+                }
+              }
+            },
+            {
+              "name": "Criar Usuário RESTAURANT_OWNER ✅ 201",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is 201', function () {",
+                      "    pm.response.to.have.status(201);",
+                      "});",
+                      "pm.test('Save ownerUserId', function () {",
+                      "    var json = pm.response.json();",
+                      "    pm.collectionVariables.set('ownerUserId', json.id);",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "url": "{{prodUrl}}/api/v1/users",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Owner Teste\",\n  \"email\": \"owner@email.com\",\n  \"login\": \"ownerteste\",\n  \"password\": \"Senha123\",\n  \"address\": \"Rua Owner, 1\",\n  \"userTypeId\": \"{{restaurantOwnerTypeId}}\"\n}"
+                }
+              }
+            },
+            {
+              "name": "Criar Restaurante ✅ 201",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is 201', function () {",
+                      "    pm.response.to.have.status(201);",
+                      "});",
+                      "pm.test('Save restaurantId', function () {",
+                      "    var json = pm.response.json();",
+                      "    pm.collectionVariables.set('restaurantId', json.id);",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "url": "{{prodUrl}}/api/v1/restaurants",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "X-User-Id",
+                    "value": "{{ownerUserId}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Restaurante Setup\",\n  \"address\": \"Rua Setup, 1\",\n  \"cuisineType\": \"ITALIANA\",\n  \"openingHours\": \"2024-01-01T11:00:00\",\n  \"closingTime\": \"2024-01-01T23:00:00\",\n  \"ownerId\": \"{{ownerUserId}}\"\n}"
+                }
+              }
+            },
+            {
+              "name": "Criar Item Cardápio ✅ 201",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is 201', function () {",
+                      "    pm.response.to.have.status(201);",
+                      "});",
+                      "pm.test('Save menuItemId', function () {",
+                      "    var json = pm.response.json();",
+                      "    pm.collectionVariables.set('menuItemId', json.id);",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "url": "{{prodUrl}}/api/v1/restaurants/{{restaurantId}}/menu-items",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "X-User-Id",
+                    "value": "{{ownerUserId}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Pizza Margherita\",\n  \"description\": \"Molho e mussarela\",\n  \"price\": 39.90,\n  \"dineInOnly\": false\n}"
+                }
               }
             }
           ]
@@ -1952,25 +2597,6 @@
               }
             },
             {
-              "name": "Deletar Tipo ✅ 204",
-              "event": [
-                {
-                  "listen": "test",
-                  "script": {
-                    "exec": [
-                      "pm.test('Status code is 204', function () {",
-                      "    pm.response.to.have.status(204);",
-                      "});"
-                    ]
-                  }
-                }
-              ],
-              "request": {
-                "method": "DELETE",
-                "url": "{{prodUrl}}/api/v1/user-types/{{userTypeId}}"
-              }
-            },
-            {
               "name": "Deletar Tipo - ID inexistente ❌ 404",
               "event": [
                 {
@@ -1994,40 +2620,6 @@
         {
           "name": "Usuários",
           "item": [
-            {
-              "name": "Criar Tipo para Usuário ✅ 201",
-              "event": [
-                {
-                  "listen": "test",
-                  "script": {
-                    "exec": [
-                      "pm.test('Status code is 201', function () {",
-                      "    pm.response.to.have.status(201);",
-                      "});",
-                      "pm.test('Save userTypeId', function () {",
-                      "    var json = pm.response.json();",
-                      "    pm.expect(json.id).to.not.be.undefined;",
-                      "    pm.collectionVariables.set('userTypeId', json.id);",
-                      "});"
-                    ]
-                  }
-                }
-              ],
-              "request": {
-                "method": "POST",
-                "url": "{{prodUrl}}/api/v1/user-types",
-                "header": [
-                  {
-                    "key": "Content-Type",
-                    "value": "application/json"
-                  }
-                ],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n  \"name\": \"CUSTOMER\"\n}"
-                }
-              }
-            },
             {
               "name": "Criar Usuário (CUSTOMER) ✅ 201",
               "event": [
@@ -2248,25 +2840,6 @@
               }
             },
             {
-              "name": "Deletar Usuário ✅ 204",
-              "event": [
-                {
-                  "listen": "test",
-                  "script": {
-                    "exec": [
-                      "pm.test('Status code is 204', function () {",
-                      "    pm.response.to.have.status(204);",
-                      "});"
-                    ]
-                  }
-                }
-              ],
-              "request": {
-                "method": "DELETE",
-                "url": "{{prodUrl}}/api/v1/users/{{userId}}"
-              }
-            },
-            {
               "name": "Deletar Usuário - ID inexistente ❌ 404",
               "event": [
                 {
@@ -2284,58 +2857,16 @@
                 "method": "DELETE",
                 "url": "{{prodUrl}}/api/v1/users/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
               }
-            }
-          ]
-        },
-        {
-          "name": "Autenticação",
-          "item": [
-            {
-              "name": "Criar Tipo para Auth ✅ 201",
-              "event": [
-                {
-                  "listen": "test",
-                  "script": {
-                    "exec": [
-                      "pm.test('Status code is 201', function () {",
-                      "    pm.response.to.have.status(201);",
-                      "});",
-                      "pm.test('Save userTypeId', function () {",
-                      "    var json = pm.response.json();",
-                      "    pm.collectionVariables.set('userTypeId', json.id);",
-                      "});"
-                    ]
-                  }
-                }
-              ],
-              "request": {
-                "method": "POST",
-                "url": "{{prodUrl}}/api/v1/user-types",
-                "header": [
-                  {
-                    "key": "Content-Type",
-                    "value": "application/json"
-                  }
-                ],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n  \"name\": \"AUTH_TYPE\"\n}"
-                }
-              }
             },
             {
-              "name": "Criar Usuário para Auth ✅ 201",
+              "name": "Criar Usuário - Senha curta ❌ 422",
               "event": [
                 {
                   "listen": "test",
                   "script": {
                     "exec": [
-                      "pm.test('Status code is 201', function () {",
-                      "    pm.response.to.have.status(201);",
-                      "});",
-                      "pm.test('Save userId', function () {",
-                      "    var json = pm.response.json();",
-                      "    pm.collectionVariables.set('userId', json.id);",
+                      "pm.test('Status code is 422', function () {",
+                      "    pm.response.to.have.status(422);",
                       "});"
                     ]
                   }
@@ -2352,10 +2883,102 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"name\": \"Auth User\",\n  \"email\": \"auth@email.com\",\n  \"login\": \"authuser\",\n  \"password\": \"Senha123\",\n  \"address\": \"Rua Auth, 1\",\n  \"userTypeId\": \"{{userTypeId}}\"\n}"
+                  "raw": "{\n  \"name\": \"Teste\",\n  \"email\": \"curta@email.com\",\n  \"login\": \"curta\",\n  \"password\": \"Ab1\",\n  \"address\": \"Rua X\",\n  \"userTypeId\": \"{{userTypeId}}\"\n}"
                 }
               }
             },
+            {
+              "name": "Criar Usuário - Senha sem maiúscula ❌ 422",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is 422', function () {",
+                      "    pm.response.to.have.status(422);",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "url": "{{prodUrl}}/api/v1/users",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Teste\",\n  \"email\": \"semmai@email.com\",\n  \"login\": \"semmai\",\n  \"password\": \"senha123abc\",\n  \"address\": \"Rua X\",\n  \"userTypeId\": \"{{userTypeId}}\"\n}"
+                }
+              }
+            },
+            {
+              "name": "Criar Usuário - Senha sem minúscula ❌ 422",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is 422', function () {",
+                      "    pm.response.to.have.status(422);",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "url": "{{prodUrl}}/api/v1/users",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Teste\",\n  \"email\": \"semmin@email.com\",\n  \"login\": \"semmin\",\n  \"password\": \"SENHA123ABC\",\n  \"address\": \"Rua X\",\n  \"userTypeId\": \"{{userTypeId}}\"\n}"
+                }
+              }
+            },
+            {
+              "name": "Criar Usuário - Senha sem número ❌ 422",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is 422', function () {",
+                      "    pm.response.to.have.status(422);",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "url": "{{prodUrl}}/api/v1/users",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Teste\",\n  \"email\": \"semnum@email.com\",\n  \"login\": \"semnum\",\n  \"password\": \"SenhaForte\",\n  \"address\": \"Rua X\",\n  \"userTypeId\": \"{{userTypeId}}\"\n}"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Autenticação",
+          "item": [
             {
               "name": "Login ✅ 200",
               "event": [
@@ -2516,72 +3139,6 @@
           "name": "Restaurantes",
           "item": [
             {
-              "name": "Criar Tipo RESTAURANT_OWNER ✅ 201",
-              "event": [
-                {
-                  "listen": "test",
-                  "script": {
-                    "exec": [
-                      "pm.test('Status code is 201', function () {",
-                      "    pm.response.to.have.status(201);",
-                      "});",
-                      "pm.test('Save userTypeId', function () {",
-                      "    var json = pm.response.json();",
-                      "    pm.collectionVariables.set('userTypeId', json.id);",
-                      "});"
-                    ]
-                  }
-                }
-              ],
-              "request": {
-                "method": "POST",
-                "url": "{{prodUrl}}/api/v1/user-types",
-                "header": [
-                  {
-                    "key": "Content-Type",
-                    "value": "application/json"
-                  }
-                ],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n  \"name\": \"REST_OWNER\"\n}"
-                }
-              }
-            },
-            {
-              "name": "Criar Owner para Restaurante ✅ 201",
-              "event": [
-                {
-                  "listen": "test",
-                  "script": {
-                    "exec": [
-                      "pm.test('Status code is 201', function () {",
-                      "    pm.response.to.have.status(201);",
-                      "});",
-                      "pm.test('Save userId', function () {",
-                      "    var json = pm.response.json();",
-                      "    pm.collectionVariables.set('userId', json.id);",
-                      "});"
-                    ]
-                  }
-                }
-              ],
-              "request": {
-                "method": "POST",
-                "url": "{{prodUrl}}/api/v1/users",
-                "header": [
-                  {
-                    "key": "Content-Type",
-                    "value": "application/json"
-                  }
-                ],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n  \"name\": \"Owner Rest\",\n  \"email\": \"ownerrest@email.com\",\n  \"login\": \"ownerrest\",\n  \"password\": \"Senha123\",\n  \"address\": \"Rua Owner, 1\",\n  \"userTypeId\": \"{{userTypeId}}\"\n}"
-                }
-              }
-            },
-            {
               "name": "Criar Restaurante ✅ 201",
               "event": [
                 {
@@ -2608,6 +3165,10 @@
                   {
                     "key": "Content-Type",
                     "value": "application/json"
+                  },
+                  {
+                    "key": "X-User-Id",
+                    "value": "{{userId}}"
                   }
                 ],
                 "body": {
@@ -2641,6 +3202,10 @@
                   {
                     "key": "Content-Type",
                     "value": "application/json"
+                  },
+                  {
+                    "key": "X-User-Id",
+                    "value": "{{userId}}"
                   }
                 ],
                 "body": {
@@ -2670,6 +3235,10 @@
                   {
                     "key": "Content-Type",
                     "value": "application/json"
+                  },
+                  {
+                    "key": "X-User-Id",
+                    "value": "{{userId}}"
                   }
                 ],
                 "body": {
@@ -2699,7 +3268,13 @@
               ],
               "request": {
                 "method": "GET",
-                "url": "{{prodUrl}}/api/v1/restaurants"
+                "url": "{{prodUrl}}/api/v1/restaurants",
+                "header": [
+                  {
+                    "key": "X-User-Id",
+                    "value": "{{userId}}"
+                  }
+                ]
               }
             },
             {
@@ -2722,7 +3297,13 @@
               ],
               "request": {
                 "method": "GET",
-                "url": "{{prodUrl}}/api/v1/restaurants/{{restaurantId}}"
+                "url": "{{prodUrl}}/api/v1/restaurants/{{restaurantId}}",
+                "header": [
+                  {
+                    "key": "X-User-Id",
+                    "value": "{{userId}}"
+                  }
+                ]
               }
             },
             {
@@ -2741,7 +3322,13 @@
               ],
               "request": {
                 "method": "GET",
-                "url": "{{prodUrl}}/api/v1/restaurants/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
+                "url": "{{prodUrl}}/api/v1/restaurants/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
+                "header": [
+                  {
+                    "key": "X-User-Id",
+                    "value": "{{userId}}"
+                  }
+                ]
               }
             },
             {
@@ -2765,7 +3352,13 @@
               ],
               "request": {
                 "method": "GET",
-                "url": "{{prodUrl}}/api/v1/restaurants?ownerId={{userId}}"
+                "url": "{{prodUrl}}/api/v1/restaurants?ownerId={{userId}}",
+                "header": [
+                  {
+                    "key": "X-User-Id",
+                    "value": "{{userId}}"
+                  }
+                ]
               }
             },
             {
@@ -2793,6 +3386,10 @@
                   {
                     "key": "Content-Type",
                     "value": "application/json"
+                  },
+                  {
+                    "key": "X-User-Id",
+                    "value": "{{userId}}"
                   }
                 ],
                 "body": {
@@ -2822,6 +3419,10 @@
                   {
                     "key": "Content-Type",
                     "value": "application/json"
+                  },
+                  {
+                    "key": "X-User-Id",
+                    "value": "{{userId}}"
                   }
                 ],
                 "body": {
@@ -2831,14 +3432,51 @@
               }
             },
             {
-              "name": "Deletar Restaurante ✅ 204",
+              "name": "Atualizar Restaurante - Não é dono ❌ 422",
               "event": [
                 {
                   "listen": "test",
                   "script": {
                     "exec": [
-                      "pm.test('Status code is 204', function () {",
-                      "    pm.response.to.have.status(204);",
+                      "pm.test('Status code is 422', function () {",
+                      "    pm.response.to.have.status(422);",
+                      "});",
+                      "pm.test('Response has ownership error', function () {",
+                      "    var json = pm.response.json();",
+                      "    pm.expect(json.detail).to.include('proprietário');",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "PUT",
+                "url": "{{prodUrl}}/api/v1/restaurants/{{restaurantId}}",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "X-User-Id",
+                    "value": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Tentativa Hack\",\n  \"address\": \"Rua Hack\",\n  \"cuisineType\": \"HACK\",\n  \"openingHours\": \"2024-01-01T08:00:00\",\n  \"closingTime\": \"2024-01-01T22:00:00\",\n  \"ownerId\": \"{{userId}}\"\n}"
+                }
+              }
+            },
+            {
+              "name": "Deletar Restaurante - Não é dono ❌ 422",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is 422', function () {",
+                      "    pm.response.to.have.status(422);",
                       "});"
                     ]
                   }
@@ -2846,7 +3484,13 @@
               ],
               "request": {
                 "method": "DELETE",
-                "url": "{{prodUrl}}/api/v1/restaurants/{{restaurantId}}"
+                "url": "{{prodUrl}}/api/v1/restaurants/{{restaurantId}}",
+                "header": [
+                  {
+                    "key": "X-User-Id",
+                    "value": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
+                  }
+                ]
               }
             },
             {
@@ -2865,7 +3509,13 @@
               ],
               "request": {
                 "method": "DELETE",
-                "url": "{{prodUrl}}/api/v1/restaurants/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
+                "url": "{{prodUrl}}/api/v1/restaurants/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
+                "header": [
+                  {
+                    "key": "X-User-Id",
+                    "value": "{{userId}}"
+                  }
+                ]
               }
             }
           ]
@@ -2873,106 +3523,6 @@
         {
           "name": "Cardápio (MenuItem)",
           "item": [
-            {
-              "name": "Criar Tipo para MenuItem ✅ 201",
-              "event": [
-                {
-                  "listen": "test",
-                  "script": {
-                    "exec": [
-                      "pm.test('Status code is 201', function () {",
-                      "    pm.response.to.have.status(201);",
-                      "});",
-                      "pm.test('Save userTypeId', function () {",
-                      "    var json = pm.response.json();",
-                      "    pm.collectionVariables.set('userTypeId', json.id);",
-                      "});"
-                    ]
-                  }
-                }
-              ],
-              "request": {
-                "method": "POST",
-                "url": "{{prodUrl}}/api/v1/user-types",
-                "header": [
-                  {
-                    "key": "Content-Type",
-                    "value": "application/json"
-                  }
-                ],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n  \"name\": \"OWNER_MENU\"\n}"
-                }
-              }
-            },
-            {
-              "name": "Criar Usuário Owner ✅ 201",
-              "event": [
-                {
-                  "listen": "test",
-                  "script": {
-                    "exec": [
-                      "pm.test('Status code is 201', function () {",
-                      "    pm.response.to.have.status(201);",
-                      "});",
-                      "pm.test('Save userId', function () {",
-                      "    var json = pm.response.json();",
-                      "    pm.collectionVariables.set('userId', json.id);",
-                      "});"
-                    ]
-                  }
-                }
-              ],
-              "request": {
-                "method": "POST",
-                "url": "{{prodUrl}}/api/v1/users",
-                "header": [
-                  {
-                    "key": "Content-Type",
-                    "value": "application/json"
-                  }
-                ],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n  \"name\": \"Owner Menu\",\n  \"email\": \"ownermenu@email.com\",\n  \"login\": \"ownermenu\",\n  \"password\": \"Senha123\",\n  \"address\": \"Rua Owner, 1\",\n  \"userTypeId\": \"{{userTypeId}}\"\n}"
-                }
-              }
-            },
-            {
-              "name": "Criar Restaurante para MenuItem ✅ 201",
-              "event": [
-                {
-                  "listen": "test",
-                  "script": {
-                    "exec": [
-                      "pm.test('Status code is 201', function () {",
-                      "    pm.response.to.have.status(201);",
-                      "});",
-                      "pm.test('Save restaurantId', function () {",
-                      "    var json = pm.response.json();",
-                      "    pm.expect(json.id).to.not.be.undefined;",
-                      "    pm.collectionVariables.set('restaurantId', json.id);",
-                      "});"
-                    ]
-                  }
-                }
-              ],
-              "request": {
-                "method": "POST",
-                "url": "{{prodUrl}}/api/v1/restaurants",
-                "header": [
-                  {
-                    "key": "Content-Type",
-                    "value": "application/json"
-                  }
-                ],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\n  \"name\": \"Restaurante Teste Menu\",\n  \"cuisineType\": \"ITALIANA\",\n  \"openingHours\": \"2026-01-01T08:00:00\",\n  \"closingTime\": \"2026-01-01T22:00:00\",\n  \"ownerId\": \"{{userId}}\"\n}"
-                }
-              }
-            },
             {
               "name": "Criar Item ✅ 201",
               "event": [
@@ -3000,6 +3550,10 @@
                   {
                     "key": "Content-Type",
                     "value": "application/json"
+                  },
+                  {
+                    "key": "X-User-Id",
+                    "value": "{{userId}}"
                   }
                 ],
                 "body": {
@@ -3029,6 +3583,10 @@
                   {
                     "key": "Content-Type",
                     "value": "application/json"
+                  },
+                  {
+                    "key": "X-User-Id",
+                    "value": "{{userId}}"
                   }
                 ],
                 "body": {
@@ -3058,6 +3616,10 @@
                   {
                     "key": "Content-Type",
                     "value": "application/json"
+                  },
+                  {
+                    "key": "X-User-Id",
+                    "value": "{{userId}}"
                   }
                 ],
                 "body": {
@@ -3087,7 +3649,13 @@
               ],
               "request": {
                 "method": "GET",
-                "url": "{{prodUrl}}/api/v1/restaurants/{{restaurantId}}/menu-items"
+                "url": "{{prodUrl}}/api/v1/restaurants/{{restaurantId}}/menu-items",
+                "header": [
+                  {
+                    "key": "X-User-Id",
+                    "value": "{{userId}}"
+                  }
+                ]
               }
             },
             {
@@ -3110,7 +3678,13 @@
               ],
               "request": {
                 "method": "GET",
-                "url": "{{prodUrl}}/api/v1/menu-items/{{menuItemId}}"
+                "url": "{{prodUrl}}/api/v1/menu-items/{{menuItemId}}",
+                "header": [
+                  {
+                    "key": "X-User-Id",
+                    "value": "{{userId}}"
+                  }
+                ]
               }
             },
             {
@@ -3129,7 +3703,13 @@
               ],
               "request": {
                 "method": "GET",
-                "url": "{{prodUrl}}/api/v1/menu-items/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
+                "url": "{{prodUrl}}/api/v1/menu-items/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
+                "header": [
+                  {
+                    "key": "X-User-Id",
+                    "value": "{{userId}}"
+                  }
+                ]
               }
             },
             {
@@ -3157,6 +3737,10 @@
                   {
                     "key": "Content-Type",
                     "value": "application/json"
+                  },
+                  {
+                    "key": "X-User-Id",
+                    "value": "{{userId}}"
                   }
                 ],
                 "body": {
@@ -3166,22 +3750,73 @@
               }
             },
             {
-              "name": "Deletar Item ✅ 204",
+              "name": "Criar Item - Não é dono do restaurante ❌ 422",
               "event": [
                 {
                   "listen": "test",
                   "script": {
                     "exec": [
-                      "pm.test('Status code is 204', function () {",
-                      "    pm.response.to.have.status(204);",
+                      "pm.test('Status code is 422', function () {",
+                      "    pm.response.to.have.status(422);",
+                      "});",
+                      "pm.test('Response has ownership error', function () {",
+                      "    var json = pm.response.json();",
+                      "    pm.expect(json.detail).to.include('proprietário');",
                       "});"
                     ]
                   }
                 }
               ],
               "request": {
-                "method": "DELETE",
-                "url": "{{prodUrl}}/api/v1/menu-items/{{menuItemId}}"
+                "method": "POST",
+                "url": "{{prodUrl}}/api/v1/restaurants/{{restaurantId}}/menu-items",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "X-User-Id",
+                    "value": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Item Hack\",\n  \"description\": \"Tentativa\",\n  \"price\": 10.00,\n  \"dineInOnly\": false\n}"
+                }
+              }
+            },
+            {
+              "name": "Atualizar Item - Preço negativo ❌ 422",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is 422', function () {",
+                      "    pm.response.to.have.status(422);",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "PUT",
+                "url": "{{prodUrl}}/api/v1/menu-items/{{menuItemId}}",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "X-User-Id",
+                    "value": "{{userId}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Item\",\n  \"description\": \"desc\",\n  \"price\": -5.00,\n  \"dineInOnly\": false\n}"
+                }
               }
             },
             {
@@ -3200,7 +3835,232 @@
               ],
               "request": {
                 "method": "DELETE",
-                "url": "{{prodUrl}}/api/v1/menu-items/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
+                "url": "{{prodUrl}}/api/v1/menu-items/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
+                "header": [
+                  {
+                    "key": "X-User-Id",
+                    "value": "{{userId}}"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Limpeza (Delete)",
+          "item": [
+            {
+              "name": "Deletar Item Cardápio ✅ 204",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is 204', function () {",
+                      "    pm.response.to.have.status(204);",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "DELETE",
+                "url": "{{prodUrl}}/api/v1/menu-items/{{menuItemId}}",
+                "header": [
+                  {
+                    "key": "X-User-Id",
+                    "value": "{{ownerUserId}}"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "Deletar Item - ID inexistente ❌ 404",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is 404', function () {",
+                      "    pm.response.to.have.status(404);",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "DELETE",
+                "url": "{{prodUrl}}/api/v1/menu-items/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
+                "header": [
+                  {
+                    "key": "X-User-Id",
+                    "value": "{{ownerUserId}}"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "Deletar Restaurante ✅ 204",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is 204', function () {",
+                      "    pm.response.to.have.status(204);",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "DELETE",
+                "url": "{{prodUrl}}/api/v1/restaurants/{{restaurantId}}",
+                "header": [
+                  {
+                    "key": "X-User-Id",
+                    "value": "{{ownerUserId}}"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "Deletar Restaurante - ID inexistente ❌ 404",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is 404', function () {",
+                      "    pm.response.to.have.status(404);",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "DELETE",
+                "url": "{{prodUrl}}/api/v1/restaurants/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
+                "header": [
+                  {
+                    "key": "X-User-Id",
+                    "value": "{{ownerUserId}}"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "Deletar Usuário Owner ✅ 204",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is 204', function () {",
+                      "    pm.response.to.have.status(204);",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "DELETE",
+                "url": "{{prodUrl}}/api/v1/users/{{ownerUserId}}"
+              }
+            },
+            {
+              "name": "Deletar Usuário Customer ✅ 204",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is 204', function () {",
+                      "    pm.response.to.have.status(204);",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "DELETE",
+                "url": "{{prodUrl}}/api/v1/users/{{userId}}"
+              }
+            },
+            {
+              "name": "Deletar Usuário - ID inexistente ❌ 404",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is 404', function () {",
+                      "    pm.response.to.have.status(404);",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "DELETE",
+                "url": "{{prodUrl}}/api/v1/users/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
+              }
+            },
+            {
+              "name": "Deletar Tipo RESTAURANT_OWNER ✅ 204",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is 204', function () {",
+                      "    pm.response.to.have.status(204);",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "DELETE",
+                "url": "{{prodUrl}}/api/v1/user-types/{{restaurantOwnerTypeId}}"
+              }
+            },
+            {
+              "name": "Deletar Tipo CUSTOMER ✅ 204",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is 204', function () {",
+                      "    pm.response.to.have.status(204);",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "DELETE",
+                "url": "{{prodUrl}}/api/v1/user-types/{{userTypeId}}"
+              }
+            },
+            {
+              "name": "Deletar Tipo - ID inexistente ❌ 404",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is 404', function () {",
+                      "    pm.response.to.have.status(404);",
+                      "});"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "DELETE",
+                "url": "{{prodUrl}}/api/v1/user-types/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
               }
             }
           ]
