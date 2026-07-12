@@ -110,6 +110,14 @@ stop_docker() {
   echo "✅ Containers parados."
 }
 
+reset_db() {
+  echo ""
+  echo "🗑️  Limpando banco de dados (remove volume)..."
+  echo ""
+  docker-compose down -v 2>/dev/null
+  echo "✅ Banco limpo. Execute a opção 4 para subir novamente."
+}
+
 run_tests() {
   detect_java || return 1
   echo ""
@@ -404,7 +412,8 @@ show_menu() {
   echo "║  6) Rodar testes (mvn clean verify)     ║"
   echo "║  7) Rodar collection (Newman + HTML)    ║"
   echo "║  8) Rodar testes API (curl + jq)        ║"
-  echo "║  9) Kill porta 8080                     ║"
+  echo "║  9) Limpar banco (docker-compose -v)    ║"
+  echo "║ 10) Kill porta 8080                     ║"
   echo "║  0) Sair                                ║"
   echo "╚══════════════════════════════════════════╝"
   echo ""
@@ -419,7 +428,8 @@ show_menu() {
     6) run_tests ;;
     7) run_collection ;;
     8) run_collection_shell ;;
-    9) kill_port 8080 ;;
+    9) reset_db ;;
+    10) kill_port 8080 ;;
     0) echo "👋 Até mais!" && exit 0 ;;
     *) echo "❌ Opção inválida." && show_menu ;;
   esac
@@ -434,8 +444,9 @@ if [ -n "$1" ]; then
     tests) run_tests ;;
     collection) run_collection ;;
     test-api) run_collection_shell ;;
+    reset-db) reset_db ;;
     kill) kill_port 8080 ;;
-    *) echo "Uso: ./run.sh [dev|test|prod|docker|stop|tests|collection|test-api|kill]" ;;
+    *) echo "Uso: ./run.sh [dev|test|prod|docker|stop|tests|collection|test-api|reset-db|kill]" ;;
   esac
 else
   show_menu

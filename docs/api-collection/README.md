@@ -36,49 +36,28 @@ Collection completa de testes para a API de Gestão de Restaurantes.
 📁 local
 ├── 📁 Health Check (1 request)
 │   └── Health ✅ 200
-├── 📁 Tipos de Usuário (12 requests)
-│   ├── Criar CUSTOMER ✅ 201
-│   ├── Criar RESTAURANT_OWNER ✅ 201
-│   ├── Criar - Nome duplicado ❌ 422
-│   ├── Criar - Nome vazio ❌ 400
-│   ├── Listar ✅ 200
-│   ├── Buscar por ID ✅ 200
-│   ├── Buscar - ID inexistente ❌ 404
-│   ├── Atualizar ✅ 200
-│   ├── Atualizar - Nome duplicado ❌ 422
-│   ├── Atualizar - ID inexistente ❌ 404
-│   ├── Deletar ✅ 204
-│   └── Deletar - ID inexistente ❌ 404
-├── 📁 Usuários (10 requests)
-│   ├── Criar (CUSTOMER) ✅ 201
-│   ├── Criar - Email duplicado ❌ 422
-│   ├── Criar - Dados inválidos ❌ 400
-│   ├── Listar ✅ 200
-│   ├── Buscar por Nome ✅ 200
-│   ├── Buscar por ID ✅ 200
-│   ├── Buscar - ID inexistente ❌ 404
-│   ├── Atualizar ✅ 200
-│   ├── Deletar ✅ 204
-│   └── Deletar - ID inexistente ❌ 404
-├── 📁 Autenticação (5 requests)
-│   ├── Login ✅ 200
-│   ├── Login - Credenciais inválidas ❌ 422
-│   ├── Trocar Senha ✅ 200
-│   ├── Trocar Senha - Atual incorreta ❌ 400
-│   └── Trocar Senha - ID inexistente ❌ 404
-└── 📁 Cardápio - MenuItem (9 requests)
-    ├── Criar Item ✅ 201
-    ├── Criar - Restaurante inexistente ❌ 404
-    ├── Criar - Preço zero ❌ 400
-    ├── Listar Itens do Restaurante ✅ 200
-    ├── Buscar por ID ✅ 200
-    ├── Buscar - ID inexistente ❌ 404
-    ├── Atualizar ✅ 200
-    ├── Deletar ✅ 204
-    └── Deletar - ID inexistente ❌ 404
+├── 📁 Setup (6 requests)
+│   ├── Criar Tipo CUSTOMER
+│   ├── Criar Tipo RESTAURANT_OWNER
+│   ├── Criar Usuário CUSTOMER
+│   ├── Criar Usuário RESTAURANT_OWNER
+│   ├── Criar Restaurante
+│   └── Criar Item Cardápio
+├── 📁 Tipos de Usuário (testes CRUD + erros)
+├── 📁 Usuários (testes CRUD + validação senha)
+├── 📁 Autenticação (login + troca senha)
+├── 📁 Restaurantes (CRUD + validação dono via X-User-Id)
+├── 📁 Cardápio (CRUD + validação dono + preço)
+└── 📁 Limpeza (Delete na ordem: MenuItem → Restaurant → User → UserType)
 
-📁 prod (mesma estrutura simplificada)
+📁 prod (mesma estrutura)
 ```
+
+## Header X-User-Id
+
+Os endpoints de Restaurant (POST, PUT, DELETE) e MenuItem (POST, PUT, DELETE) aceitam o header `X-User-Id` para identificar o usuário logado. Quando presente, valida que somente o proprietário pode alterar/deletar.
+
+O header é **opcional** — sem ele, funciona sem validação de dono (backward compatible).
 
 ## Endpoints cobertos
 
