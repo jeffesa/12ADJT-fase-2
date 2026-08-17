@@ -179,7 +179,8 @@ Menu interativo:
 ║  6) Rodar testes (mvn clean verify)     ║
 ║  7) Rodar collection (Newman + HTML)    ║
 ║  8) Rodar testes API (curl + jq)        ║
-║  9) Kill porta 8080                     ║
+║  9) Limpar banco (docker-compose -v)    ║
+║ 10) Kill porta 8080                     ║
 ║  0) Sair                                ║
 ╚══════════════════════════════════════════╝
 ```
@@ -192,6 +193,7 @@ Também aceita argumentos diretos:
 ./run.sh tests      # Roda testes
 ./run.sh collection # Newman + HTML report
 ./run.sh test-api   # Testes via curl + jq
+./run.sh reset-db   # Limpa banco (remove volume)
 ./run.sh kill       # Mata processo na porta 8080
 ```
 
